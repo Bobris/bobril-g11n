@@ -1,0 +1,29 @@
+{
+  "name": "bobril-g11n",
+  "version": "0.1.0",
+  "description": "Bobril globalization",
+  "main": "index.js",
+  "dependencies": {
+    "bobril": "^4.0.0",
+    "moment": "^2.10.6",
+    "numeral": "^1.5.3"
+  },
+  "devDependencies": {
+    "graceful-fs": "^4.1.2",
+    "gulp": "^3.9.0",
+    "gulp-bump": "*",
+    "gulp-util": "^3.0.6",
+    "karma": "*",
+    "karma-coverage": "*",
+    "karma-jasmine": "^0.3.6",
+    "karma-phantomjs-launcher": "*",
+    "through2": "*",
+    "typescript": "^1.5.3",
+    "webpack": "^1.11.0"
+  },
+  "scripts": {
+    "test": "karma start"
+  },
+  "author": "Boris Letocha",
+  "license": "MIT"
+}

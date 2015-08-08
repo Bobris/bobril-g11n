@@ -1,0 +1,26 @@
+{
+    "version": "1.5.0-beta",
+    "compilerOptions": {
+        "target": "es6",
+        "module": "commonjs",
+        "declaration": false,
+        "noImplicitAny": false,
+        "removeComments": false,
+        "noLib": false,
+        "preserveConstEnums": false,
+        "suppressImplicitAnyIndexErrors": true
+    },
+    "compileOnSave": false,
+    "filesGlob": [
+        "./*.ts",
+        "!./node_modules/**/*.ts",
+        "../typings/jasmine/jasmine.d.ts",
+        "../node_modules/typescript/bin/typescript.d.ts"
+    ],
+    "files": [
+        "./msgFormatParserSpec.ts",
+        "./msgFormatterSpec.ts",
+        "../typings/jasmine/jasmine.d.ts",
+        "../node_modules/typescript/bin/typescript.d.ts"
+    ]
+}
