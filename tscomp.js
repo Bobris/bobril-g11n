@@ -46,6 +46,10 @@ function createCompilerHost(currentDirectory) {
 		if (filename===defaultLibFilename && languageVersion===lastLibVersion) {
 			return lastLibPrecompiled;
 		}
+		var indexOfNodeModules = filename.lastIndexOf('/node_modules/');
+		if (indexOfNodeModules >= 0) {
+			filename = filename.substr(indexOfNodeModules + 1);
+		}
 		try {
 			var text = getFileFromCache(filename).content;
 		} catch (e) {

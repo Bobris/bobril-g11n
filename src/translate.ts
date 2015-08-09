@@ -63,7 +63,7 @@ export function t(message: string | number, params?: Object, translationHelp?: s
     return format(params);
 }
 
-function initGlobalization(config?: IG11NConfig): Promise<any> {
+export function initGlobalization(config?: IG11NConfig): Promise<any> {
     if (initWasStarted) {
         throw new Error('initLocalization must be called only once');
     }
@@ -77,7 +77,7 @@ function initGlobalization(config?: IG11NConfig): Promise<any> {
     return prom;
 }
 
-function setLocale(locale: string): Promise<any> {
+export function setLocale(locale: string): Promise<any> {
     let prom = Promise.resolve(null);
     if (currentLocale === locale)
         return prom;
@@ -85,25 +85,28 @@ function setLocale(locale: string): Promise<any> {
         loadedLocales[locale] = true;
         let pathToTranslation = cfg.pathToTranslation;
         if (pathToTranslation) {
-            prom = prom.then(() => {
-                jsonp(pathToTranslation(locale));
-            })
+			let p = pathToTranslation(locale);
+			if (p) {
+				prom = prom.then(() => {
+					jsonp(p);
+				});
+			}
         }
     }
     prom = prom.then(() => {
         currentLocale = locale;
-        currentTranslations = registeredTranslations[locale];
+        currentTranslations = registeredTranslations[locale] || [];
         currentCachedFormat = [];
         currentCachedFormat.length = currentTranslations.length;
     });
     return prom;
 }
 
-function getLocale(): string {
+export function getLocale(): string {
     return currentLocale;
 }
 
-function registerTranslations(locale: string, pluralFn: (val: number, ordinal: boolean) => string, msgs: string[]): void {
+export function registerTranslations(locale: string, pluralFn: (val: number, ordinal: boolean) => string, msgs: string[]): void {
     if (typeof pluralFn === 'function') localeDataStorage.setPluralRule(locale, pluralFn);
     if (Array.isArray(msgs))
         registeredTranslations[locale] = msgs;

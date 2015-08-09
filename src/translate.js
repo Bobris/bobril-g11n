@@ -66,6 +66,7 @@ function initGlobalization(config) {
     });
     return prom;
 }
+exports.initGlobalization = initGlobalization;
 function setLocale(locale) {
     var prom = Promise.resolve(null);
     if (currentLocale === locale)
@@ -74,22 +75,27 @@ function setLocale(locale) {
         loadedLocales[locale] = true;
         var pathToTranslation = cfg.pathToTranslation;
         if (pathToTranslation) {
-            prom = prom.then(function () {
-                jsonp_1.jsonp(pathToTranslation(locale));
-            });
+            var p = pathToTranslation(locale);
+            if (p) {
+                prom = prom.then(function () {
+                    jsonp_1.jsonp(p);
+                });
+            }
         }
     }
     prom = prom.then(function () {
         currentLocale = locale;
-        currentTranslations = registeredTranslations[locale];
+        currentTranslations = registeredTranslations[locale] || [];
         currentCachedFormat = [];
         currentCachedFormat.length = currentTranslations.length;
     });
     return prom;
 }
+exports.setLocale = setLocale;
 function getLocale() {
     return currentLocale;
 }
+exports.getLocale = getLocale;
 function registerTranslations(locale, pluralFn, msgs) {
     if (typeof pluralFn === 'function')
         localeDataStorage.setPluralRule(locale, pluralFn);
@@ -97,5 +103,6 @@ function registerTranslations(locale, pluralFn, msgs) {
         registeredTranslations[locale] = msgs;
     loadedLocales[locale] = true;
 }
+exports.registerTranslations = registerTranslations;
 if (window)
     window['bobrilRegisterTranslations'] = registerTranslations;
