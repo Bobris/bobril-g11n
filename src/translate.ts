@@ -106,8 +106,10 @@ export function getLocale(): string {
     return currentLocale;
 }
 
-export function registerTranslations(locale: string, pluralFn: (val: number, ordinal: boolean) => string, msgs: string[]): void {
-    if (typeof pluralFn === 'function') localeDataStorage.setPluralRule(locale, pluralFn);
+export function registerTranslations(locale: string, localeDefs:any[], msgs: string[]): void {
+    if (Array.isArray(localeDefs)) {
+        if (localeDefs.length>=1) localeDataStorage.setPluralRule(locale, localeDefs[0]);
+    }
     if (Array.isArray(msgs))
         registeredTranslations[locale] = msgs;
     loadedLocales[locale] = true;

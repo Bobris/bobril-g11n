@@ -96,9 +96,11 @@ function getLocale() {
     return currentLocale;
 }
 exports.getLocale = getLocale;
-function registerTranslations(locale, pluralFn, msgs) {
-    if (typeof pluralFn === 'function')
-        localeDataStorage.setPluralRule(locale, pluralFn);
+function registerTranslations(locale, localeDefs, msgs) {
+    if (Array.isArray(localeDefs)) {
+        if (localeDefs.length >= 1)
+            localeDataStorage.setPluralRule(locale, localeDefs[0]);
+    }
     if (Array.isArray(msgs))
         registeredTranslations[locale] = msgs;
     loadedLocales[locale] = true;

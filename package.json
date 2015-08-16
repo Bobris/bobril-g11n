@@ -1,6 +1,6 @@
 {
   "name": "bobril-g11n",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "Bobril globalization",
   "main": "index.js",
   "dependencies": {
@@ -13,6 +13,7 @@
     "gulp": "^3.9.0",
     "gulp-bump": "*",
     "gulp-util": "^3.0.6",
+    "jasmine-core": "^2.3.4",
     "karma": "*",
     "karma-coverage": "*",
     "karma-jasmine": "^0.3.6",

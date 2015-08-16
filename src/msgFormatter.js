@@ -15,12 +15,6 @@ function AnyFormatter(locale, type, style, options) {
             if (style === 'percent') {
                 return function (val, opt) { numeral.language(language); return numeral(val).format('0%'); };
             }
-            if (style === 'shorten') {
-                return function (val, opt) { numeral.language(language); return numeral(val).format('0.0 a'); };
-            }
-            if (style === 'ordered') {
-                return function (val, opt) { numeral.language(language); return numeral(val).format('0o'); };
-            }
             if (style === 'bytes') {
                 return function (val, opt) { numeral.language(language); return numeral(val).format('0b'); };
             }

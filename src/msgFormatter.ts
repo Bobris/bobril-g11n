@@ -18,12 +18,6 @@ function AnyFormatter(locale: string, type: string, style: string, options: Obje
             if (style === 'percent') {
                 return (val, opt) => { numeral.language(language); return numeral(val).format('0%') };
             }
-            if (style === 'shorten') {
-                return (val, opt) => { numeral.language(language); return numeral(val).format('0.0 a') };
-            }
-            if (style === 'ordered') {
-                return (val, opt) => { numeral.language(language); return numeral(val).format('0o') };
-            }
             if (style === 'bytes') {
                 return (val, opt) => { numeral.language(language); return numeral(val).format('0b') };
             }

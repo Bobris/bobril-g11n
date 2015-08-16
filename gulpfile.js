@@ -15,7 +15,7 @@ gulp.task('bump', function(){
 });
 
 var alltsfilesToWatch = ['./*.ts','./src/**/*.ts','./test/**/*.ts'];
-var alltsProjsToCompile = ['./tsconfig.json','./test/tsconfig.json'];
+var alltsProjsToCompile = ['./tsconfig.json','./src/tsconfig.json','./test/tsconfig.json'];
 alltsfilesToWatch = alltsfilesToWatch.concat(alltsProjsToCompile);
 
 gulp.task('ts', ['webpack'], function () {
