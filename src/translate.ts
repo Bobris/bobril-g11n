@@ -1,6 +1,6 @@
 import * as msgFormatParser from "./msgFormatParser";
 import * as msgFormatter from './msgFormatter';
-import * as b from 'node_modules/bobril/index';
+import * as b from 'bobril';
 import { jsonp } from './jsonp';
 import * as localeDataStorage from './localeDataStorage';
 
@@ -88,7 +88,7 @@ export function setLocale(locale: string): Promise<any> {
 			let p = pathToTranslation(locale);
 			if (p) {
 				prom = prom.then(() => {
-					jsonp(p);
+					return jsonp(p);
 				});
 			}
         }
@@ -98,6 +98,7 @@ export function setLocale(locale: string): Promise<any> {
         currentTranslations = registeredTranslations[locale] || [];
         currentCachedFormat = [];
         currentCachedFormat.length = currentTranslations.length;
+        b.ignoreShouldChange();
     });
     return prom;
 }

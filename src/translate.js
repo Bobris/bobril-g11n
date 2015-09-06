@@ -1,6 +1,6 @@
 var msgFormatParser = require("./msgFormatParser");
 var msgFormatter = require('./msgFormatter');
-var b = require('node_modules/bobril/index');
+var b = require('bobril');
 var jsonp_1 = require('./jsonp');
 var localeDataStorage = require('./localeDataStorage');
 var cfg = {};
@@ -78,7 +78,7 @@ function setLocale(locale) {
             var p = pathToTranslation(locale);
             if (p) {
                 prom = prom.then(function () {
-                    jsonp_1.jsonp(p);
+                    return jsonp_1.jsonp(p);
                 });
             }
         }
@@ -88,6 +88,7 @@ function setLocale(locale) {
         currentTranslations = registeredTranslations[locale] || [];
         currentCachedFormat = [];
         currentCachedFormat.length = currentTranslations.length;
+        b.ignoreShouldChange();
     });
     return prom;
 }

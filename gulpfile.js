@@ -1,7 +1,5 @@
 var gulp = require('gulp');
 var gutil = require('gulp-util');
-var replace = require('gulp-replace');
-var rename = require('gulp-rename');
 var fs = require('graceful-fs');
 var typeScriptCompile = require('./tscomp.js');
 var through2 = require('through2');
