@@ -1,10 +1,11 @@
 {
   "name": "bobril-g11n",
-  "version": "0.4.1",
+  "version": "0.4.2",
   "description": "Bobril globalization",
   "main": "index.js",
   "typescript": {
-    "main": "index.ts"
+    "main": "index.ts",
+    "definition": "index.d.ts"
   },
   "dependencies": {
     "bobril": "^4.4.0",
