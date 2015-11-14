@@ -10,8 +10,8 @@ module.exports = function(config) {
 	
     files: [
       'testbundle/bundle.js',
-      { pattern: 'src/**/*.ts', included: false },
-      { pattern: 'test/**/*.ts', included: false }
+      { pattern: 'src/**/*.ts', included: false, watched: false },
+      { pattern: 'test/**/*.ts', included: false, watched: false }
     ],
 
     // preprocess matching files before serving them to the browser
