@@ -91,6 +91,7 @@ function setLocale(locale) {
         currentTranslations = registeredTranslations[locale] || [];
         currentCachedFormat = [];
         currentCachedFormat.length = currentTranslations.length;
+        stringCachedFormats = Object.create(null);
         b.ignoreShouldChange();
     });
     return prom;

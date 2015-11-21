@@ -101,6 +101,7 @@ export function setLocale(locale: string): Promise<any> {
         currentTranslations = registeredTranslations[locale] || [];
         currentCachedFormat = [];
         currentCachedFormat.length = currentTranslations.length;
+		stringCachedFormats = Object.create(null);
         b.ignoreShouldChange();
     });
     return prom;
