@@ -3,7 +3,7 @@ var msgFormatter = require('./msgFormatter');
 var b = require('bobril');
 var jsonp_1 = require('./jsonp');
 var localeDataStorage = require('./localeDataStorage');
-var cfg = {};
+var cfg = { defaultLocale: "en", pathToTranslation: function () { return null; } };
 var loadedLocales = Object.create(null);
 var registeredTranslations = Object.create(null);
 var initWasStarted = false;
@@ -57,18 +57,24 @@ function f(message, params) {
     return t(message, params);
 }
 exports.f = f;
+var initPromise = Promise.resolve(null);
+initPromise = initPromise.then(function () { return setLocale(cfg.defaultLocale); });
+b.setBeforeInit(function (cb) {
+    initPromise.then(cb);
+});
 function initGlobalization(config) {
     if (initWasStarted) {
         throw new Error('initLocalization must be called only once');
     }
-    cfg = config;
+    b.assign(cfg, config);
     initWasStarted = true;
-    var prom = Promise.resolve(null);
-    prom = prom.then(function () { return setLocale(config.defaultLocale || 'en'); });
-    b.setBeforeInit(function (cb) {
-        prom.then(cb);
-    });
-    return prom;
+    if (currentLocale.length !== 0) {
+        if (!loadedLocales[currentLocale]) {
+            currentLocale = "";
+        }
+        return setLocale(cfg.defaultLocale);
+    }
+    return initPromise;
 }
 exports.initGlobalization = initGlobalization;
 function setLocale(locale) {

@@ -13,14 +13,26 @@ interface IMessageFormat {
     (params?: Object): string;
 }
 
-let cfg: IG11NConfig = {};
-let loadedLocales: { [name: string]: boolean } = Object.create(null);
-let registeredTranslations: { [name: string]: string[] } = Object.create(null);
+function newMap():any {
+    return Object.create(null);
+}
+
+let cfg: IG11NConfig = { defaultLocale: "en-US", pathToTranslation: () => null };
+let loadedLocales: { [name: string]: boolean } = newMap();
+let registeredTranslations: { [name: string]: string[] } = newMap();
 let initWasStarted = false;
 let currentLocale = '';
 let currentTranslations: string[] = [];
 let currentCachedFormat: IMessageFormat[] = [];
-let stringCachedFormats: { [input: string]: IMessageFormat } = Object.create(null);
+let stringCachedFormats: { [input: string]: IMessageFormat } = newMap();
+
+if ((<any>window).g11nPath) {
+    cfg.pathToTranslation = (<any>window).g11nPath;
+}
+
+if ((<any>window).g11nLoc) {
+    cfg.defaultLocale = (<any>window).g11nLoc;
+}
 
 function currentTranslationMessage(message: number): string {
     let text = currentTranslations[message];
@@ -67,18 +79,25 @@ export function f(message: string, params: Object): string {
     return t(message, params);
 }
 
+let initPromise = Promise.resolve<any>(null);
+initPromise = initPromise.then(() => setLocale(cfg.defaultLocale));
+b.setBeforeInit((cb: (_: any) => void) => {
+    initPromise.then(cb);
+});
+
 export function initGlobalization(config?: IG11NConfig): Promise<any> {
     if (initWasStarted) {
         throw new Error('initLocalization must be called only once');
     }
-    cfg = config;
+    b.assign(cfg, config);
     initWasStarted = true;
-    var prom = Promise.resolve<any>(null);
-    prom = prom.then(() => setLocale(config.defaultLocale || 'en'));
-    b.setBeforeInit((cb: (_:any)=>void) => {
-        prom.then(cb);
-    });
-    return prom;
+    if (currentLocale.length !== 0) {
+        if (!loadedLocales[currentLocale]) {
+            currentLocale = "";
+        }
+        return setLocale(cfg.defaultLocale);
+    }
+    return initPromise;
 }
 
 export function setLocale(locale: string): Promise<any> {
@@ -88,12 +107,12 @@ export function setLocale(locale: string): Promise<any> {
     if (!loadedLocales[locale]) {
         let pathToTranslation = cfg.pathToTranslation;
         if (pathToTranslation) {
-			let p = pathToTranslation(locale);
-			if (p) {
-				prom = prom.then(() => {
-					return jsonp(p);
-				});
-			}
+            let p = pathToTranslation(locale);
+            if (p) {
+                prom = prom.then(() => {
+                    return jsonp(p);
+                });
+            }
         }
     }
     prom = prom.then(() => {
@@ -101,7 +120,7 @@ export function setLocale(locale: string): Promise<any> {
         currentTranslations = registeredTranslations[locale] || [];
         currentCachedFormat = [];
         currentCachedFormat.length = currentTranslations.length;
-		stringCachedFormats = Object.create(null);
+        stringCachedFormats = newMap();
         b.ignoreShouldChange();
     });
     return prom;
@@ -111,9 +130,9 @@ export function getLocale(): string {
     return currentLocale;
 }
 
-export function registerTranslations(locale: string, localeDefs:any[], msgs: string[]): void {
+export function registerTranslations(locale: string, localeDefs: any[], msgs: string[]): void {
     if (Array.isArray(localeDefs)) {
-        if (localeDefs.length>=1) localeDataStorage.setPluralRule(locale, localeDefs[0]);
+        if (localeDefs.length >= 1) localeDataStorage.setPluralRule(locale, localeDefs[0]);
     }
     if (Array.isArray(msgs))
         registeredTranslations[locale] = msgs;
