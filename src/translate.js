@@ -3,14 +3,24 @@ var msgFormatter = require('./msgFormatter');
 var b = require('bobril');
 var jsonp_1 = require('./jsonp');
 var localeDataStorage = require('./localeDataStorage');
-var cfg = { defaultLocale: "en", pathToTranslation: function () { return null; } };
-var loadedLocales = Object.create(null);
-var registeredTranslations = Object.create(null);
+function newMap() {
+    return Object.create(null);
+}
+var cfg = { defaultLocale: "en-US", pathToTranslation: function () { return null; } };
+var loadedLocales = newMap();
+var registeredTranslations = newMap();
 var initWasStarted = false;
 var currentLocale = '';
 var currentTranslations = [];
 var currentCachedFormat = [];
-var stringCachedFormats = Object.create(null);
+var stringCachedFormats = newMap();
+var momentInstance;
+if (window.g11nPath) {
+    cfg.pathToTranslation = window.g11nPath;
+}
+if (window.g11nLoc) {
+    cfg.defaultLocale = window.g11nLoc;
+}
 function currentTranslationMessage(message) {
     var text = currentTranslations[message];
     if (text === undefined) {
@@ -97,7 +107,8 @@ function setLocale(locale) {
         currentTranslations = registeredTranslations[locale] || [];
         currentCachedFormat = [];
         currentCachedFormat.length = currentTranslations.length;
-        stringCachedFormats = Object.create(null);
+        stringCachedFormats = newMap();
+        momentInstance = window.moment().invalid().locale(currentLocale);
         b.ignoreShouldChange();
     });
     return prom;
@@ -107,6 +118,10 @@ function getLocale() {
     return currentLocale;
 }
 exports.getLocale = getLocale;
+function getMoment() {
+    return momentInstance.clone();
+}
+exports.getMoment = getMoment;
 function registerTranslations(locale, localeDefs, msgs) {
     if (Array.isArray(localeDefs)) {
         if (localeDefs.length >= 1)

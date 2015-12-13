@@ -2,6 +2,8 @@
 
 Bobril Globalization extension
 
+[![npm version](https://badge.fury.io/js/bobril-g11n.svg)](https://badge.fury.io/js/bobril-g11n)
+
 install from npm:
 
 	npm install bobril-g11n --save
@@ -24,7 +26,16 @@ Usage in TypeScript:
 		return { tag:'div', children: g.t('Hello {who}!', { who: 'World' }) };
 	});
 
-Set different locale - it will asynchronously download translation file.
+With bobril-build, you don't need to call `g.initGlobalization` at all. It will correctly set path to translation by defining global method `g11nPath`. Just make sure to not call `t` before bobril will call init factory.
+
+With if you don't need translation to different language just format text with current locale use function `f` like this:
+
+	let modified = Date.now() - 100000; // only sample in reality you would get this from server or whatever
+	let displayThisInTableCell = g.f('{modified, time, relative}', { modified });
+
+Function `getMoment()` will give you instance of moment library with locally set current locale.
+
+Set different locale - it will asynchronously download translation file and automatically invalidate Bobril view including ignoring shouldChange results, so your bobflux implementation does not need to care about current locale change.
 
 	g.setLocale('cs-CZ');
 

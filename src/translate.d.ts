@@ -7,4 +7,5 @@ export declare function f(message: string, params: Object): string;
 export declare function initGlobalization(config?: IG11NConfig): Promise<any>;
 export declare function setLocale(locale: string): Promise<any>;
 export declare function getLocale(): string;
+export declare function getMoment(): moment.Moment;
 export declare function registerTranslations(locale: string, localeDefs: any[], msgs: string[]): void;

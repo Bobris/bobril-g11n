@@ -25,6 +25,7 @@ let currentLocale = '';
 let currentTranslations: string[] = [];
 let currentCachedFormat: IMessageFormat[] = [];
 let stringCachedFormats: { [input: string]: IMessageFormat } = newMap();
+let momentInstance: moment.Moment;
 
 if ((<any>window).g11nPath) {
     cfg.pathToTranslation = (<any>window).g11nPath;
@@ -121,6 +122,7 @@ export function setLocale(locale: string): Promise<any> {
         currentCachedFormat = [];
         currentCachedFormat.length = currentTranslations.length;
         stringCachedFormats = newMap();
+        momentInstance = (<any>window).moment().invalid().locale(currentLocale);
         b.ignoreShouldChange();
     });
     return prom;
@@ -128,6 +130,10 @@ export function setLocale(locale: string): Promise<any> {
 
 export function getLocale(): string {
     return currentLocale;
+}
+
+export function getMoment(): moment.Moment {
+    return momentInstance.clone();
 }
 
 export function registerTranslations(locale: string, localeDefs: any[], msgs: string[]): void {
