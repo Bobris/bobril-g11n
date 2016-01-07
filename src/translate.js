@@ -108,7 +108,7 @@ function setLocale(locale) {
         currentCachedFormat = [];
         currentCachedFormat.length = currentTranslations.length;
         stringCachedFormats = newMap();
-        momentInstance = window.moment().invalid().locale(currentLocale);
+        momentInstance = window.moment().locale(currentLocale);
         b.ignoreShouldChange();
     });
     return prom;

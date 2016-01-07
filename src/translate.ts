@@ -122,7 +122,7 @@ export function setLocale(locale: string): Promise<any> {
         currentCachedFormat = [];
         currentCachedFormat.length = currentTranslations.length;
         stringCachedFormats = newMap();
-        momentInstance = (<any>window).moment().invalid().locale(currentLocale);
+        momentInstance = (<any>window).moment().locale(currentLocale);
         b.ignoreShouldChange();
     });
     return prom;

@@ -1,6 +1,7 @@
 function __export(m) {
     for (var p in m) if (!exports.hasOwnProperty(p)) exports[p] = m[p];
 }
+/// <reference path="./typings/moment/moment-node.d.ts" />
 __export(require('./src/msgFormatParser'));
 __export(require('./src/msgFormatter'));
 __export(require('./src/extractUsedParams'));
