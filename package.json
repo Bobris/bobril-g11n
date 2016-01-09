@@ -1,6 +1,6 @@
 {
   "name": "bobril-g11n",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Bobril globalization",
   "main": "index.js",
   "typescript": {
@@ -8,23 +8,24 @@
     "definition": "index.d.ts"
   },
   "dependencies": {
-    "bobril": "^4.4.0",
+    "bobril": "*",
     "moment": "^2.10.6",
     "numeral": "^1.5.3"
   },
   "devDependencies": {
-    "graceful-fs": "^4.1.2",
+    "graceful-fs": "*",
     "gulp": "^3.9.0",
     "gulp-bump": "*",
     "gulp-util": "^3.0.6",
-    "jasmine-core": "^2.3.4",
+    "jasmine-core": "*",
     "karma": "*",
     "karma-coverage": "*",
-    "karma-jasmine": "^0.3.6",
+    "karma-jasmine": "*",
     "karma-phantomjs-launcher": "*",
+    "phantomjs": "*",
     "through2": "*",
     "typescript": "latest",
-    "webpack": "^1.11.0"
+    "webpack": "*"
   },
   "scripts": {
     "test": "karma start"
