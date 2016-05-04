@@ -1,3 +1,4 @@
+"use strict";
 function extractUsedParams(msgAst) {
     var params = Object.create(null);
     extractUsedParamsRec(params, msgAst);

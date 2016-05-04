@@ -1,3 +1,4 @@
+"use strict";
 var RuntimeFunctionGenerator_1 = require('./RuntimeFunctionGenerator');
 var localeDataStorage = require('./localeDataStorage');
 var numeral = require('numeral');

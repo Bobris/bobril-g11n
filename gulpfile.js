@@ -43,7 +43,8 @@ function bundletest(callback) {
 		entry: [
             "./test/msgFormatParserSpec.js",
             "./test/msgFormatterSpec.js",
-            "./test/extractUsedParamsSpec.js"
+            "./test/extractUsedParamsSpec.js",
+            "./test/translateSpec.js"
         ],
         module: {
           noParse: [/moment.js/]

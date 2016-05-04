@@ -1,3 +1,4 @@
+"use strict";
 var sourceText;
 var pos;
 var length;

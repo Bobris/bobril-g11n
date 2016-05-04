@@ -1,3 +1,4 @@
+"use strict";
 if (!Object.assign) {
     Object.assign = function assign(target) {
         var sources = [];

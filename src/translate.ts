@@ -132,8 +132,18 @@ export function getLocale(): string {
     return currentLocale;
 }
 
-export function getMoment(): moment.Moment {
+export function getMoment(init?: any): moment.Moment {
+    if (init!==undefined) {
+        return (<any>window).moment(init).locale(currentLocale);
+    }
     return momentInstance.clone();
+}
+
+declare var require: any;
+var numeral = require('numeral');
+
+export function unformatNumber(str: string): number {
+    return numeral().unformat(str);    
 }
 
 export function registerTranslations(locale: string, localeDefs: any[], msgs: string[]): void {

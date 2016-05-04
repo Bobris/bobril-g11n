@@ -1,3 +1,4 @@
+"use strict";
 var RuntimeFunctionGenerator = (function () {
     function RuntimeFunctionGenerator() {
         this.constants = [];
@@ -42,5 +43,5 @@ var RuntimeFunctionGenerator = (function () {
         return Function.apply(null, innerParams);
     };
     return RuntimeFunctionGenerator;
-})();
+}());
 exports.RuntimeFunctionGenerator = RuntimeFunctionGenerator;

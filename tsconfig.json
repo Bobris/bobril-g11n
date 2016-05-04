@@ -37,6 +37,7 @@
         "./test/msgFormatterSpec.d.ts",
         "./test/msgFormatterSpec.ts",
         "./test/extractUsedParamsSpec.ts",
+        "./test/translateSpec.ts",
         "./typings/moment/moment-node.d.ts",
         "./typings/numeral/numeral.d.ts",
         "./typings/jasmine/jasmine.d.ts",

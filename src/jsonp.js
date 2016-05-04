@@ -1,3 +1,4 @@
+"use strict";
 function jsonp(url) {
     return new Promise(function (r, e) {
         var script = document.createElement('script');

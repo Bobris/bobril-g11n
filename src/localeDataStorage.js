@@ -1,3 +1,4 @@
+"use strict";
 var defs = Object.create(null);
 defs['en'] = {
     pluralFn: function (n, ord) {

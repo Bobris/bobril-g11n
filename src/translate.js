@@ -1,3 +1,4 @@
+"use strict";
 var msgFormatParser = require("./msgFormatParser");
 var msgFormatter = require('./msgFormatter');
 var b = require('bobril');
@@ -94,10 +95,10 @@ function setLocale(locale) {
     if (!loadedLocales[locale]) {
         var pathToTranslation = cfg.pathToTranslation;
         if (pathToTranslation) {
-            var p = pathToTranslation(locale);
-            if (p) {
+            var p_1 = pathToTranslation(locale);
+            if (p_1) {
                 prom = prom.then(function () {
-                    return jsonp_1.jsonp(p);
+                    return jsonp_1.jsonp(p_1);
                 });
             }
         }
@@ -118,10 +119,18 @@ function getLocale() {
     return currentLocale;
 }
 exports.getLocale = getLocale;
-function getMoment() {
+function getMoment(init) {
+    if (init !== undefined) {
+        return window.moment(init).locale(currentLocale);
+    }
     return momentInstance.clone();
 }
 exports.getMoment = getMoment;
+var numeral = require('numeral');
+function unformatNumber(str) {
+    return numeral().unformat(str);
+}
+exports.unformatNumber = unformatNumber;
 function registerTranslations(locale, localeDefs, msgs) {
     if (Array.isArray(localeDefs)) {
         if (localeDefs.length >= 1)
