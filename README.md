@@ -4,6 +4,8 @@ Bobril Globalization extension
 
 [![npm version](https://badge.fury.io/js/bobril-g11n.svg)](https://badge.fury.io/js/bobril-g11n)
 
+Changelog: https://github.com/Bobris/Bobril-g11n/blob/master/CHANGELOG.md
+
 install from npm:
 
 	npm install bobril-g11n --save
@@ -15,8 +17,8 @@ Message parse for speed and size written in hand optimized code instead of Pegjs
 
 Usage in TypeScript:
 
-	import * as b from 'node_modules/bobril/index';
-	import * as g from 'node_modules/bobril-g11n/index';
+	import * as b from 'bobril';
+	import * as g from 'bobril-g11n';
 	
 	g.initGlobalization({
 		pathToTranslation(locale:string):string { return 'tr/'+locale+'.js'; }
