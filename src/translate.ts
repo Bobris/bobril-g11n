@@ -13,7 +13,7 @@ interface IMessageFormat {
     (params?: Object): string;
 }
 
-function newMap():any {
+function newMap(): any {
     return Object.create(null);
 }
 
@@ -112,7 +112,7 @@ export function setLocale(locale: string): Promise<any> {
             if (p) {
                 prom = prom.then(() => {
                     return jsonp(p);
-                });
+                }).then(null, (e) => console.warn(e));
             }
         }
     }
@@ -133,7 +133,7 @@ export function getLocale(): string {
 }
 
 export function getMoment(init?: any): moment.Moment {
-    if (init!==undefined) {
+    if (init !== undefined) {
         return (<any>window).moment(init).locale(currentLocale);
     }
     return momentInstance.clone();
@@ -143,7 +143,7 @@ declare var require: any;
 var numeral = require('numeral');
 
 export function unformatNumber(str: string): number {
-    return numeral().unformat(str);    
+    return numeral().unformat(str);
 }
 
 export function registerTranslations(locale: string, localeDefs: any[], msgs: string[]): void {

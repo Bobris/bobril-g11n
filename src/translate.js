@@ -99,7 +99,7 @@ function setLocale(locale) {
             if (p_1) {
                 prom = prom.then(function () {
                     return jsonp_1.jsonp(p_1);
-                });
+                }).then(null, function (e) { return console.warn(e); });
             }
         }
     }
