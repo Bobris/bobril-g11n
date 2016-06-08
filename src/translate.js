@@ -119,9 +119,9 @@ function getLocale() {
     return currentLocale;
 }
 exports.getLocale = getLocale;
-function getMoment(init) {
+function getMoment(init, init2, init3) {
     if (init !== undefined) {
-        return window.moment(init).locale(currentLocale);
+        return window.moment(init, init2, init3).locale(currentLocale);
     }
     return momentInstance.clone();
 }

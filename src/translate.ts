@@ -132,9 +132,9 @@ export function getLocale(): string {
     return currentLocale;
 }
 
-export function getMoment(init?: any): moment.Moment {
+export function getMoment(init?: any, init2?: any, init3?: any): moment.Moment {
     if (init !== undefined) {
-        return (<any>window).moment(init).locale(currentLocale);
+        return (<any>window).moment(init, init2, init3).locale(currentLocale);
     }
     return momentInstance.clone();
 }
