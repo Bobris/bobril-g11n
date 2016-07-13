@@ -24,7 +24,7 @@
     "karma-phantomjs-launcher": "*",
     "phantomjs": "*",
     "through2": "*",
-    "typescript": "latest",
+    "typescript": "*",
     "webpack": "*"
   },
   "scripts": {
