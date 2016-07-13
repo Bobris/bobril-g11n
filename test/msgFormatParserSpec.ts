@@ -96,4 +96,17 @@ describe('Parser', () => {
                 }
             });
     });
+
+    function error(msg:string) {
+        let ast = msgFormatParser.parse(msg);
+        expect(typeof ast).toEqual("object");
+        expect(ast.type).toEqual("error");        
+    }
+
+    it('catch all errors', () => {
+        error('{');
+        error('{a');
+        error('{a, invalid}');
+        error('{floor, selectordinal, =0{ground} one{#st} bad{#nd} few{#rd} other{#th}}')
+    });
 });

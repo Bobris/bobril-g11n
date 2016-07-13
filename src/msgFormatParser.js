@@ -115,6 +115,7 @@ function parseNumber() {
     } while (curToken >= 48 && curToken <= 57);
     return parseInt(number, 10);
 }
+var numClasses = { zero: 1, one: 1, two: 1, few: 1, many: 1, other: 1 };
 function parseFormat() {
     skipWs();
     if (curToken === ErrorToken)
@@ -232,7 +233,7 @@ function parseFormat() {
                     if (curToken < 48 || curToken > 57) {
                         return buildError('Expecting number');
                     }
-                    format.offset = parseInt(parseNumber(), 10);
+                    format.offset = parseNumber();
                 }
                 else
                     return buildError('After "offset:" there must be number');
@@ -246,6 +247,8 @@ function parseFormat() {
             }
             else {
                 selector = chars;
+                if (!numClasses[selector])
+                    return buildError("Selector " + selector + " is not one of " + Object.keys(numClasses).join(", "));
             }
             if (curToken !== OpenBracketToken) {
                 return buildError('Expecting "{"');

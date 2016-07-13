@@ -108,7 +108,7 @@ function parseChars(): string {
     return res;
 }
 
-function parseNumber(): any {
+function parseNumber(): number {
     let number = '';
     do {
         number += String.fromCharCode(curToken);
@@ -116,6 +116,8 @@ function parseNumber(): any {
     } while (curToken >= 48 && curToken <= 57);
     return parseInt(number, 10);
 }
+
+const numClasses: { [name: string]: number } = { zero: 1, one: 1, two: 1, few: 1, many: 1, other: 1 };
 
 function parseFormat(): any {
     skipWs();
@@ -220,17 +222,18 @@ function parseFormat(): any {
                     if (curToken < 48 || curToken > 57) {
                         return buildError('Expecting number');
                     }
-                    format.offset = parseInt(parseNumber(), 10);
+                    format.offset = parseNumber();
                 } else return buildError('After "offset:" there must be number');
                 offsetAllowed = false;
                 continue;
             }
             offsetAllowed = false;
-            let selector: string|number;
+            let selector: string | number;
             if (/^=[0-9]+$/.test(chars)) {
                 selector = parseInt(chars.substring(1), 10);
             } else {
                 selector = chars;
+                if (!numClasses[selector]) return buildError("Selector " + selector + " is not one of " + Object.keys(numClasses).join(", "));
             }
             if (curToken !== OpenBracketToken) {
                 return buildError('Expecting "{"');
@@ -258,7 +261,7 @@ function parseFormat(): any {
             }
             let chars = parseChars();
             skipWs();
-            let selector: string|number;
+            let selector: string | number;
             if (/^=[0-9]+$/.test(chars)) {
                 selector = parseInt(chars.substring(1), 10);
             } else {

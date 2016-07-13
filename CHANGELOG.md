@@ -1,6 +1,14 @@
 CHANGELOG
 ===
 
+1.4.0
+--
+
+New features
+-
+
+Check plural and selectordinal selectors to be only in allowed list.
+
 1.3.0
 --
 

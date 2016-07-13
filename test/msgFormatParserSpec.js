@@ -64,4 +64,15 @@ describe('Parser', function () {
             }
         });
     });
+    function error(msg) {
+        var ast = msgFormatParser.parse(msg);
+        expect(typeof ast).toEqual("object");
+        expect(ast.type).toEqual("error");
+    }
+    it('catch all errors', function () {
+        error('{');
+        error('{a');
+        error('{a, invalid}');
+        error('{floor, selectordinal, =0{ground} one{#st} bad{#nd} few{#rd} other{#th}}');
+    });
 });
