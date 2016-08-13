@@ -1,6 +1,15 @@
 CHANGELOG
 ===
 
+2.0.0
+--
+
+Breaking changes
+-
+
+Requires Bobril 4.44.0 or higher, but does not depend on it in package.json. Bobril needs to be required sooner than bobril-g11n.
+When setLocale fails it will revoke returned promise. Additionaly it will try to revert to default locale before.
+
 1.4.0
 --
 

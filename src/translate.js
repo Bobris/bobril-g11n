@@ -1,7 +1,6 @@
 "use strict";
 var msgFormatParser = require("./msgFormatParser");
 var msgFormatter = require('./msgFormatter');
-var b = require('bobril');
 var jsonp_1 = require('./jsonp');
 var localeDataStorage = require('./localeDataStorage');
 function newMap() {
@@ -71,13 +70,13 @@ exports.f = f;
 var initPromise = Promise.resolve(null);
 initPromise = initPromise.then(function () { return setLocale(cfg.defaultLocale); });
 b.setBeforeInit(function (cb) {
-    initPromise.then(cb);
+    initPromise.then(cb, cb);
 });
 function initGlobalization(config) {
     if (initWasStarted) {
         throw new Error('initLocalization must be called only once');
     }
-    b.assign(cfg, config);
+    Object.assign(cfg, config);
     initWasStarted = true;
     if (currentLocale.length !== 0) {
         if (!loadedLocales[currentLocale]) {
@@ -99,7 +98,11 @@ function setLocale(locale) {
             if (p_1) {
                 prom = prom.then(function () {
                     return jsonp_1.jsonp(p_1);
-                }).then(null, function (e) { return console.warn(e); });
+                }).then(null, function (e) {
+                    console.warn(e);
+                    if (locale != cfg.defaultLocale)
+                        return setLocale(cfg.defaultLocale).then(function () { return Promise.reject(e); });
+                });
             }
         }
     }

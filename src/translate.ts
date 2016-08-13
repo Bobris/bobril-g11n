@@ -1,8 +1,12 @@
 import * as msgFormatParser from "./msgFormatParser";
 import * as msgFormatter from './msgFormatter';
-import * as b from 'bobril';
 import { jsonp } from './jsonp';
 import * as localeDataStorage from './localeDataStorage';
+
+declare var b: {
+    setBeforeInit(callback: (cb: () => void) => void): void;
+    ignoreShouldChange(): void;
+};
 
 export interface IG11NConfig {
     defaultLocale?: string;
@@ -83,14 +87,14 @@ export function f(message: string, params: Object): string {
 let initPromise = Promise.resolve<any>(null);
 initPromise = initPromise.then(() => setLocale(cfg.defaultLocale));
 b.setBeforeInit((cb: (_: any) => void) => {
-    initPromise.then(cb);
+    initPromise.then(cb, cb);
 });
 
-export function initGlobalization(config?: IG11NConfig): Promise<any> {
+export function initGlobalization(config?: IG11NConfig): Promise<void> {
     if (initWasStarted) {
         throw new Error('initLocalization must be called only once');
     }
-    b.assign(cfg, config);
+    Object.assign(cfg, config);
     initWasStarted = true;
     if (currentLocale.length !== 0) {
         if (!loadedLocales[currentLocale]) {
@@ -112,7 +116,11 @@ export function setLocale(locale: string): Promise<any> {
             if (p) {
                 prom = prom.then(() => {
                     return jsonp(p);
-                }).then(null, (e) => console.warn(e));
+                }).then(null, (e) => {
+                    console.warn(e);
+                    if (locale != cfg.defaultLocale)
+                        return setLocale(cfg.defaultLocale).then(() => Promise.reject(e));
+                });
             }
         }
     }

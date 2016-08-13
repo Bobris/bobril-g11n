@@ -1,3 +1,4 @@
+import "bobril"; 
 import * as translate from "../src/translate";
 
 describe('translate', () => {

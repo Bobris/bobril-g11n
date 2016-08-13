@@ -1,4 +1,5 @@
 "use strict";
+require("bobril");
 var translate = require("../src/translate");
 describe('translate', function () {
     it('unformat works', function () {
