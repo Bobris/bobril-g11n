@@ -7,7 +7,7 @@ function jsonp(url) {
         script.onload = function () {
             r();
         };
-        script.onerror = function (ev) {
+        script.onerror = function (_ev) {
             e('Failed to load ' + url);
         };
         script.src = url;

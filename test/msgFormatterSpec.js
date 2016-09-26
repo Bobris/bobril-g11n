@@ -1,9 +1,9 @@
 "use strict";
 if (!Object.assign) {
     Object.assign = function assign(target) {
-        var sources = [];
+        var _sources = [];
         for (var _i = 1; _i < arguments.length; _i++) {
-            sources[_i - 1] = arguments[_i];
+            _sources[_i - 1] = arguments[_i];
         }
         var totalArgs = arguments.length;
         for (var i = 1; i < totalArgs; i++) {

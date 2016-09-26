@@ -1,6 +1,14 @@
 CHANGELOG
 ===
 
+2.1.0
+--
+
+New features
+-
+
+Compilable by TS 2.0 with most strict settings.
+
 2.0.0
 --
 

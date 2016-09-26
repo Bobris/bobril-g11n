@@ -14,13 +14,13 @@ function AnyFormatter(locale: string, type: string, style: string, options: Obje
                 return (val, opt) => { numeral.language(language); return numeral(val).format((<any>opt).format); };
             }
             if (style === 'default') {
-                return (val, opt) => { numeral.language(language); return numeral(val).format('0,0.[0000]') };
+                return (val, _opt) => { numeral.language(language); return numeral(val).format('0,0.[0000]') };
             }
             if (style === 'percent') {
-                return (val, opt) => { numeral.language(language); return numeral(val).format('0%') };
+                return (val, _opt) => { numeral.language(language); return numeral(val).format('0%') };
             }
             if (style === 'bytes') {
-                return (val, opt) => { numeral.language(language); return numeral(val).format('0b') };
+                return (val, _opt) => { numeral.language(language); return numeral(val).format('0b') };
             }
             break;
         }
@@ -28,22 +28,23 @@ function AnyFormatter(locale: string, type: string, style: string, options: Obje
         case 'time': {
             if (style === 'relative') {
                 if ((<any>options)['noago'] === true) {
-                    return (val, opt) => { return moment(val).locale(language).fromNow(true); };
+                    return (val, _opt) => { return moment(val).locale(language).fromNow(true); };
                 }
                 if ((<any>options)['noago'] === null) {
                     return (val, opt) => { return moment(val).locale(language).fromNow((<any>opt)['noago']); };
                 }
-                return (val, opt) => { return moment(val).locale(language).fromNow(false); };
+                return (val, _opt) => { return moment(val).locale(language).fromNow(false); };
             }
             if (style === 'calendar') {
-                return (val, opt) => { return moment(val).locale(language).calendar(); };
+                return (val, _opt) => { return moment(val).locale(language).calendar(); };
             }
             if (style === 'custom' && 'format' in options) {
                 return (val, opt) => { return moment(val).locale(language).format((<any>opt).format); };
             }
-            return (val, opt) => { return moment(val).locale(language).format(style); };
+            return (val, _opt) => { return moment(val).locale(language).format(style); };
         }
     }
+    throw new Error("bad type in AnyFormatter");
 }
 
 export function compile(locale: string, msgAst: any): (params: Object, hashArg?: string) => string {
@@ -72,7 +73,7 @@ export function compile(locale: string, msgAst: any): (params: Object, hashArg?:
         case 'arg':
             return ((name: string) => (params: Object) => (<any>params)[name])(msgAst.id);
         case 'hash':
-            return (params, hashArg) => {
+            return (_params, hashArg) => {
                 if (hashArg === undefined) return '#';
                 return hashArg;
             };
@@ -166,11 +167,12 @@ export function compile(locale: string, msgAst: any): (params: Object, hashArg?:
                                 comp.addBody(`return ${formatFn}(${localArg},${comp.addConstant(opt) });`);
                             }
                         } else {
-                            let formatFn = comp.addConstant(AnyFormatter(locale, type, style, null));
+                            let formatFn = comp.addConstant(AnyFormatter(locale, type, style, {}));
                             comp.addBody(`return ${formatFn}(${localArg});`);
                         }
                     }
             }
             return <(params: Object, hashArg?: string) => string>comp.build();
     }
+    throw new Error("invalid AST in compile");
 }

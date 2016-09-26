@@ -39,7 +39,7 @@ function extractUsedParamsRec(usedParams: { [name:string]:boolean }, msgAst: any
                 case 'date':
                 case 'time':
                     {
-                        let style = msgAst.format.style || 'default';
+                        //let style = msgAst.format.style || 'default';
                         let options = msgAst.format.options;
                         if (options) {
 							for (let i = 0; i < options.length; i++) {

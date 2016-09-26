@@ -1,9 +1,9 @@
 var gulp = require('gulp');
 var gutil = require('gulp-util');
 var fs = require('graceful-fs');
-var typeScriptCompile = require('./tscomp.js');
 var through2 = require('through2');
 var webpack = require("webpack");
+var shell = require('gulp-shell');
 
 gulp.task('bump', function(){
   var bump = require('gulp-bump');
@@ -12,29 +12,11 @@ gulp.task('bump', function(){
     .pipe(gulp.dest('./'));
 });
 
-var alltsfilesToWatch = ['./*.ts','./src/**/*.ts','./test/**/*.ts'];
 var alltsProjsToCompile = ['./tsconfig.json'];
-alltsfilesToWatch = alltsfilesToWatch.concat(alltsProjsToCompile);
-
-gulp.task('ts', ['webpack'], function () {
-    gulp.watch(alltsfilesToWatch, ['webpacki']);
-});
-
-gulp.task('compiletsi', function () {
-    return gulp.src(alltsProjsToCompile, { read:false })
-	      .pipe(through2.obj(function(file,enc,cb) {
-			  typeScriptCompile(file.path, false);
-			  setImmediate(cb);
-			  }));
-});
 
 gulp.task('compilets', function () {
-    return gulp.src(alltsProjsToCompile, { read:false })
-	      .pipe(through2.obj(function(file,enc,cb) {
-			  console.log(file.path);
-			  typeScriptCompile(file.path, true);
-			  setImmediate(cb);
-			  }));
+    return gulp.src('./tsconfig.json', { read:false })
+	      .pipe(shell('tsc -p <%= file.path %>', { verbose: true }));
 });
 
 function bundletest(callback) {
@@ -62,10 +44,9 @@ function bundletest(callback) {
     });
 }
 
-gulp.task("webpacki", ['compiletsi'], bundletest);
 gulp.task("webpack", ['compilets'], bundletest);
 
-gulp.task('default', ['ts']);
+gulp.task('default', ['webpack']);
 
 // var peg = require('gulp-peg');
 // var peg_sources='./src/**/*.pegjs';

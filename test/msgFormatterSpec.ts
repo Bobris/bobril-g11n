@@ -1,5 +1,5 @@
 if (!Object.assign) {
-    Object.assign = function assign(target: Object, ...sources: Object[]): Object {
+    Object.assign = function assign(target: Object, ..._sources: Object[]): Object {
         let totalArgs = arguments.length;
         for (let i = 1; i < totalArgs; i++) {
             let source = arguments[i];

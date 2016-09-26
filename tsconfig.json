@@ -1,46 +1,36 @@
 {
     "compilerOptions": {
-        "target": "es6",
+        "target": "es5",
         "module": "commonjs",
+        "moduleResolution": "node",
         "declaration": true,
         "noImplicitAny": true,
+        "noImplicitThis": true,
+        "noUnusedLocals": true,
+        "noUnusedParameters": true,
+        "noImplicitReturns": true,
+        "noFallthroughCasesInSwitch": true,
+        "lib": [
+            "es5",
+            "dom",
+            "es2015.core",
+            "es2015.promise"
+        ],
         "removeComments": false,
-        "noLib": false
+        "noLib": false,
+        "preserveConstEnums": false,
+        "strictNullChecks": true
     },
     "compileOnSave": false,
-    "filesGlob": [
+    "include": [
         "./index.ts",
         "./src/*.ts",
         "./test/*.ts",
         "./typings/moment/moment-node.d.ts",
         "./typings/numeral/numeral.d.ts",
-        "./typings/jasmine/jasmine.d.ts",
-        "./node_modules/typescript/lib/typescript.d.ts"
+        "./typings/jasmine/jasmine.d.ts"
     ],
     "files": [
-        "./index.ts",
-        "./src/RuntimeFunctionGenerator.d.ts",
-        "./src/RuntimeFunctionGenerator.ts",
-        "./src/jsonp.d.ts",
-        "./src/jsonp.ts",
-        "./src/localeDataStorage.d.ts",
-        "./src/localeDataStorage.ts",
-        "./src/msgFormatParser.d.ts",
-        "./src/msgFormatParser.ts",
-        "./src/msgFormatter.d.ts",
-        "./src/msgFormatter.ts",
-        "./src/translate.d.ts",
-        "./src/translate.ts",
-        "./src/extractUsedParams.ts",
-        "./test/msgFormatParserSpec.d.ts",
-        "./test/msgFormatParserSpec.ts",
-        "./test/msgFormatterSpec.d.ts",
-        "./test/msgFormatterSpec.ts",
-        "./test/extractUsedParamsSpec.ts",
-        "./test/translateSpec.ts",
-        "./typings/moment/moment-node.d.ts",
-        "./typings/numeral/numeral.d.ts",
-        "./typings/jasmine/jasmine.d.ts",
         "./node_modules/typescript/lib/typescript.d.ts"
     ]
 }

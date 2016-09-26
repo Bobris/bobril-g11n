@@ -10,7 +10,7 @@ declare var b: {
 
 export interface IG11NConfig {
     defaultLocale?: string;
-    pathToTranslation?: (locale: string) => string;
+    pathToTranslation?: (locale: string) => string | undefined;
 }
 
 interface IMessageFormat {
@@ -21,7 +21,7 @@ function newMap(): any {
     return Object.create(null);
 }
 
-let cfg: IG11NConfig = { defaultLocale: "en-US", pathToTranslation: () => null };
+let cfg: IG11NConfig = { defaultLocale: "en-US", pathToTranslation: () => undefined };
 let loadedLocales: { [name: string]: boolean } = newMap();
 let registeredTranslations: { [name: string]: string[] } = newMap();
 let initWasStarted = false;
@@ -47,7 +47,7 @@ function currentTranslationMessage(message: number): string {
     return text;
 }
 
-export function t(message: string | number, params?: Object, translationHelp?: string): string {
+export function t(message: string | number, params?: Object, _translationHelp?: string): string {
     if (currentLocale.length === 0) {
         throw new Error('before using t you need to wait for initialization of g11n');
     }
@@ -85,7 +85,7 @@ export function f(message: string, params: Object): string {
 }
 
 let initPromise = Promise.resolve<any>(null);
-initPromise = initPromise.then(() => setLocale(cfg.defaultLocale));
+initPromise = initPromise.then(() => setLocale(cfg.defaultLocale!));
 b.setBeforeInit((cb: (_: any) => void) => {
     initPromise.then(cb, cb);
 });
@@ -100,7 +100,7 @@ export function initGlobalization(config?: IG11NConfig): Promise<void> {
         if (!loadedLocales[currentLocale]) {
             currentLocale = "";
         }
-        return setLocale(cfg.defaultLocale);
+        return setLocale(cfg.defaultLocale!);
     }
     return initPromise;
 }
@@ -115,11 +115,12 @@ export function setLocale(locale: string): Promise<any> {
             let p = pathToTranslation(locale);
             if (p) {
                 prom = prom.then(() => {
-                    return jsonp(p);
-                }).then(null, (e) => {
+                    return jsonp(p!);
+                }).catch((e) => {
                     console.warn(e);
                     if (locale != cfg.defaultLocale)
-                        return setLocale(cfg.defaultLocale).then(() => Promise.reject(e));
+                        return setLocale(cfg.defaultLocale!).then(() => Promise.reject(e));
+                    return undefined;
                 });
             }
         }

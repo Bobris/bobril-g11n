@@ -40,7 +40,7 @@ function extractUsedParamsRec(usedParams, msgAst) {
                 case 'date':
                 case 'time':
                     {
-                        var style = msgAst.format.style || 'default';
+                        //let style = msgAst.format.style || 'default';
                         var options = msgAst.format.options;
                         if (options) {
                             for (var i = 0; i < options.length; i++) {

@@ -1,6 +1,6 @@
 {
   "name": "bobril-g11n",
-  "version": "2.0.0",
+  "version": "2.1.0",
   "description": "Bobril globalization",
   "main": "index.js",
   "typescript": {
@@ -16,6 +16,7 @@
     "graceful-fs": "*",
     "gulp": "^3.9.0",
     "gulp-bump": "*",
+    "gulp-shell": "^0.5.2",
     "gulp-util": "^3.0.6",
     "jasmine-core": "*",
     "karma": "*",

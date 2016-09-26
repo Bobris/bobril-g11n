@@ -6,7 +6,7 @@ export function jsonp(url: string): Promise<any> {
         script.onload = () => {
             r();
         };
-        script.onerror = (ev) => {
+        script.onerror = (_ev) => {
             e('Failed to load ' + url);
         };
         script.src = url;

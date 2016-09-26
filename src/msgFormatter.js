@@ -12,13 +12,13 @@ function AnyFormatter(locale, type, style, options) {
                 return function (val, opt) { numeral.language(language); return numeral(val).format(opt.format); };
             }
             if (style === 'default') {
-                return function (val, opt) { numeral.language(language); return numeral(val).format('0,0.[0000]'); };
+                return function (val, _opt) { numeral.language(language); return numeral(val).format('0,0.[0000]'); };
             }
             if (style === 'percent') {
-                return function (val, opt) { numeral.language(language); return numeral(val).format('0%'); };
+                return function (val, _opt) { numeral.language(language); return numeral(val).format('0%'); };
             }
             if (style === 'bytes') {
-                return function (val, opt) { numeral.language(language); return numeral(val).format('0b'); };
+                return function (val, _opt) { numeral.language(language); return numeral(val).format('0b'); };
             }
             break;
         }
@@ -26,22 +26,23 @@ function AnyFormatter(locale, type, style, options) {
         case 'time': {
             if (style === 'relative') {
                 if (options['noago'] === true) {
-                    return function (val, opt) { return moment(val).locale(language).fromNow(true); };
+                    return function (val, _opt) { return moment(val).locale(language).fromNow(true); };
                 }
                 if (options['noago'] === null) {
                     return function (val, opt) { return moment(val).locale(language).fromNow(opt['noago']); };
                 }
-                return function (val, opt) { return moment(val).locale(language).fromNow(false); };
+                return function (val, _opt) { return moment(val).locale(language).fromNow(false); };
             }
             if (style === 'calendar') {
-                return function (val, opt) { return moment(val).locale(language).calendar(); };
+                return function (val, _opt) { return moment(val).locale(language).calendar(); };
             }
             if (style === 'custom' && 'format' in options) {
                 return function (val, opt) { return moment(val).locale(language).format(opt.format); };
             }
-            return function (val, opt) { return moment(val).locale(language).format(style); };
+            return function (val, _opt) { return moment(val).locale(language).format(style); };
         }
     }
+    throw new Error("bad type in AnyFormatter");
 }
 function compile(locale, msgAst) {
     if (typeof msgAst === 'string') {
@@ -72,7 +73,7 @@ function compile(locale, msgAst) {
         case 'arg':
             return (function (name) { return function (params) { return params[name]; }; })(msgAst.id);
         case 'hash':
-            return function (params, hashArg) {
+            return function (_params, hashArg) {
                 if (hashArg === undefined)
                     return '#';
                 return hashArg;
@@ -178,12 +179,13 @@ function compile(locale, msgAst) {
                             }
                         }
                         else {
-                            var formatFn = comp.addConstant(AnyFormatter(locale, type, style, null));
+                            var formatFn = comp.addConstant(AnyFormatter(locale, type, style, {}));
                             comp.addBody("return " + formatFn + "(" + localArg + ");");
                         }
                     }
             }
             return comp.build();
     }
+    throw new Error("invalid AST in compile");
 }
 exports.compile = compile;

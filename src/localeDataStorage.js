@@ -11,9 +11,10 @@ defs['en'] = {
 function setPluralRule(locale, pluralFn) {
     var d = defs[locale];
     if (d === undefined) {
-        d = {};
+        d = { pluralFn: pluralFn };
     }
-    d.pluralFn = pluralFn;
+    else
+        d.pluralFn = pluralFn;
     defs[locale] = d;
 }
 exports.setPluralRule = setPluralRule;

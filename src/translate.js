@@ -6,7 +6,7 @@ var localeDataStorage = require('./localeDataStorage');
 function newMap() {
     return Object.create(null);
 }
-var cfg = { defaultLocale: "en-US", pathToTranslation: function () { return null; } };
+var cfg = { defaultLocale: "en-US", pathToTranslation: function () { return undefined; } };
 var loadedLocales = newMap();
 var registeredTranslations = newMap();
 var initWasStarted = false;
@@ -28,7 +28,7 @@ function currentTranslationMessage(message) {
     }
     return text;
 }
-function t(message, params, translationHelp) {
+function t(message, params, _translationHelp) {
     if (currentLocale.length === 0) {
         throw new Error('before using t you need to wait for initialization of g11n');
     }
@@ -98,10 +98,11 @@ function setLocale(locale) {
             if (p_1) {
                 prom = prom.then(function () {
                     return jsonp_1.jsonp(p_1);
-                }).then(null, function (e) {
+                }).catch(function (e) {
                     console.warn(e);
                     if (locale != cfg.defaultLocale)
                         return setLocale(cfg.defaultLocale).then(function () { return Promise.reject(e); });
+                    return undefined;
                 });
             }
         }
