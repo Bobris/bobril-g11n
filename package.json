@@ -1,18 +1,18 @@
 {
   "name": "bobril-g11n",
-  "version": "2.1.0",
+  "version": "2.1.1",
   "description": "Bobril globalization",
   "main": "index.js",
+  "types": "index.d.ts",
   "typescript": {
-    "main": "index.ts",
-    "definition": "index.d.ts"
+    "main": "index.ts"
   },
   "dependencies": {
     "moment": "^2.10.6",
     "numeral": "^1.5.3"
   },
   "devDependencies": {
-    "bobril": "^4.44.0",
+    "bobril": "^4.46.0",
     "graceful-fs": "*",
     "gulp": "^3.9.0",
     "gulp-bump": "*",

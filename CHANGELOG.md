@@ -1,6 +1,14 @@
 CHANGELOG
 ===
 
+2.1.1
+--
+
+Fixes
+-
+
+Additional improvements for TS 2.0
+ 
 2.1.0
 --
 
