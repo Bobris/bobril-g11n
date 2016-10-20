@@ -1,6 +1,13 @@
 CHANGELOG
 ===
 
+2.1.2
+--
+Fixes
+-
+
+Fixed problem with en-gb date format treated as en only. The formated date for en-gb locale should now be DD/MM/YYYY
+
 2.1.1
 --
 
