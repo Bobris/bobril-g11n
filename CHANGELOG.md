@@ -1,6 +1,13 @@
 CHANGELOG
 ===
 
+2.1.3
+
+Fixes
+--
+
+Fixed tests. Now testable by Bobril-build.
+
 2.1.2
 --
 Fixes

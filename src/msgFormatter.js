@@ -26,20 +26,20 @@ function AnyFormatter(locale, type, style, options) {
         case 'time': {
             if (style === 'relative') {
                 if (options['noago'] === true) {
-                    return function (val, _opt) { return moment(val).locale(language).fromNow(true); };
+                    return function (val, _opt) { return moment(val).locale(locale).fromNow(true); };
                 }
                 if (options['noago'] === null) {
-                    return function (val, opt) { return moment(val).locale(language).fromNow(opt['noago']); };
+                    return function (val, opt) { return moment(val).locale(locale).fromNow(opt['noago']); };
                 }
-                return function (val, _opt) { return moment(val).locale(language).fromNow(false); };
+                return function (val, _opt) { return moment(val).locale(locale).fromNow(false); };
             }
             if (style === 'calendar') {
-                return function (val, _opt) { return moment(val).locale(language).calendar(); };
+                return function (val, _opt) { return moment(val).locale(locale).calendar(); };
             }
             if (style === 'custom' && 'format' in options) {
-                return function (val, opt) { return moment(val).locale(language).format(opt.format); };
+                return function (val, opt) { return moment(val).locale(locale).format(opt.format); };
             }
-            return function (val, _opt) { return moment(val).locale(language).format(style); };
+            return function (val, _opt) { return moment(val).locale(locale).format(style); };
         }
     }
     throw new Error("bad type in AnyFormatter");

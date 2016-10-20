@@ -3,7 +3,7 @@
         "target": "es5",
         "module": "commonjs",
         "moduleResolution": "node",
-        "declaration": true,
+        "declaration": false,
         "noImplicitAny": true,
         "noImplicitThis": true,
         "noUnusedLocals": true,
@@ -19,7 +19,9 @@
         "removeComments": false,
         "noLib": false,
         "preserveConstEnums": false,
-        "strictNullChecks": true
+        "strictNullChecks": true,
+        "jsx": "react",
+        "reactNamespace": "b"
     },
     "compileOnSave": false,
     "include": [
@@ -31,6 +33,6 @@
         "./typings/jasmine/jasmine.d.ts"
     ],
     "files": [
-        "./node_modules/typescript/lib/typescript.d.ts"
+        "node_modules/bobril/jsx.d.ts"
     ]
 }
