@@ -1,5 +1,6 @@
 node_modules/
 testbundle/
+dist/
 
 # =========================
 # Operating System Files
@@ -13,7 +14,8 @@ testbundle/
 .LSOverride
 
 # Icon must ends with two \r.
-Icon
+Icon
+
 
 # Thumbnails
 ._*
