@@ -1,6 +1,6 @@
 "use strict";
-var RuntimeFunctionGenerator_1 = require('./RuntimeFunctionGenerator');
-var localeDataStorage = require('./localeDataStorage');
+var RuntimeFunctionGenerator_1 = require("./RuntimeFunctionGenerator");
+var localeDataStorage = require("./localeDataStorage");
 var numeral = require('numeral');
 var moment = require('moment');
 window.moment = moment;

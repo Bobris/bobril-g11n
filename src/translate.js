@@ -1,8 +1,9 @@
 "use strict";
+/// <reference path="../typings/moment/moment-node.d.ts" />
 var msgFormatParser = require("./msgFormatParser");
-var msgFormatter = require('./msgFormatter');
-var jsonp_1 = require('./jsonp');
-var localeDataStorage = require('./localeDataStorage');
+var msgFormatter = require("./msgFormatter");
+var jsonp_1 = require("./jsonp");
+var localeDataStorage = require("./localeDataStorage");
 function newMap() {
     return Object.create(null);
 }
@@ -88,7 +89,7 @@ function initGlobalization(config) {
 }
 exports.initGlobalization = initGlobalization;
 function setLocale(locale) {
-    var prom = Promise.resolve(null);
+    var prom = Promise.resolve();
     if (currentLocale === locale)
         return prom;
     if (!loadedLocales[locale]) {
@@ -96,9 +97,7 @@ function setLocale(locale) {
         if (pathToTranslation) {
             var p_1 = pathToTranslation(locale);
             if (p_1) {
-                prom = prom.then(function () {
-                    return jsonp_1.jsonp(p_1);
-                }).catch(function (e) {
+                prom = prom.then(function () { return jsonp_1.jsonp(p_1); }).catch(function (e) {
                     console.warn(e);
                     if (locale != cfg.defaultLocale)
                         return setLocale(cfg.defaultLocale).then(function () { return Promise.reject(e); });

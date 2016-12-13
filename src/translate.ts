@@ -106,8 +106,8 @@ export function initGlobalization(config?: IG11NConfig): Promise<void> {
     return initPromise;
 }
 
-export function setLocale(locale: string): Promise<any> {
-    let prom = Promise.resolve(null);
+export function setLocale(locale: string): Promise<void> {
+    let prom = Promise.resolve();
     if (currentLocale === locale)
         return prom;
     if (!loadedLocales[locale]) {
@@ -115,9 +115,7 @@ export function setLocale(locale: string): Promise<any> {
         if (pathToTranslation) {
             let p = pathToTranslation(locale);
             if (p) {
-                prom = prom.then(() => {
-                    return jsonp(p!);
-                }).catch((e) => {
+                prom = prom.then(() => jsonp(p!)).catch((e) => {
                     console.warn(e);
                     if (locale != cfg.defaultLocale)
                         return setLocale(cfg.defaultLocale!).then(() => Promise.reject(e));

@@ -1,15 +1,25 @@
 CHANGELOG
 ===
 
+2.2.0
+--
+
+Fixes 
+-
+
+Compilation errors with TS 2.1.4. `setLocale` returns `Promise<void>` instead of `Promise<any>`
+
 2.1.3
+--
 
 Fixes
---
+-
 
 Fixed tests. Now testable by Bobril-build.
 
 2.1.2
 --
+
 Fixes
 -
 

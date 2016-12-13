@@ -117,8 +117,19 @@ function parseNumber(): number {
     return parseInt(number, 10);
 }
 
-const numClasses: { [name: string]: number } = { zero: 1, one: 1, two: 1, few: 1, many: 1, other: 1 };
+function isComma() {
+    return curToken === 44;
+}
 
+function isOpenBracketToken() {
+    return curToken === OpenBracketToken;
+}
+
+function isCloseBracketToken() {
+    return curToken === CloseBracketToken;
+}
+
+const numClasses: { [name: string]: number } = { zero: 1, one: 1, two: 1, few: 1, many: 1, other: 1 };
 function parseFormat(): any {
     skipWs();
     if (curToken === ErrorToken) return buildError();
@@ -126,11 +137,11 @@ function parseFormat(): any {
     if (isError(identificator)) return identificator;
     skipWs();
     if (curToken === ErrorToken) return buildError();
-    if (curToken === CloseBracketToken) {
+    if (isCloseBracketToken()) {
         advanceNextToken();
         return { type: 'arg', id: identificator };
     }
-    if (curToken !== 44) { // ,
+    if (!isComma()) { // ,
         return buildError('Expecting "}" or ","');
     }
     advanceNextToken();
@@ -149,11 +160,11 @@ function parseFormat(): any {
         format.type = name;
         format.style = null;
         format.options = null;
-        if (curToken === CloseBracketToken) {
+        if (isCloseBracketToken()) {
             advanceNextToken();
             return res;
         }
-        if (curToken === 44) { // ,
+        if (isComma()) { // ,
             advanceNextToken();
             skipWs();
             let style = parseIdentificator();
@@ -163,11 +174,11 @@ function parseFormat(): any {
             while (true) {
                 skipWs();
                 if (curToken === ErrorToken) return buildError();
-                if (curToken === CloseBracketToken) {
+                if (isCloseBracketToken()) {
                     advanceNextToken();
                     return res;
                 }
-                if (curToken === 44) { // ,
+                if (isComma()) { // ,
                     advanceNextToken();
                     skipWs();
                     let optionName = parseIdentificator();
@@ -178,7 +189,7 @@ function parseFormat(): any {
                         let val: any;
                         if (curToken >= 48 && curToken <= 57) {
                             val = parseNumber();
-                        } else if (curToken === OpenBracketToken) {
+                        } else if (isOpenBracketToken()) {
                             advanceNextToken();
                             val = parseMsg(false);
                         } else {
@@ -201,13 +212,13 @@ function parseFormat(): any {
         format.ordinal = name !== 'plural';
         format.offset = 0;
         format.options = options;
-        if (curToken !== 44) { // ,
+        if (!isComma()) { // ,
             return buildError('Expecting ","');
         }
         advanceNextToken();
         skipWs();
         let offsetAllowed = true;
-        while (curToken !== CloseBracketToken) {
+        while (!isCloseBracketToken()) {
             if (curToken < 0) {
                 return buildError('Expecting characters except "{", "#"');
             }
@@ -235,7 +246,7 @@ function parseFormat(): any {
                 selector = chars;
                 if (!numClasses[selector]) return buildError("Selector " + selector + " is not one of " + Object.keys(numClasses).join(", "));
             }
-            if (curToken !== OpenBracketToken) {
+            if (!isOpenBracketToken()) {
                 return buildError('Expecting "{"');
             }
             advanceNextToken();
@@ -250,12 +261,12 @@ function parseFormat(): any {
         let options: any[] = [];
         format.type = 'select';
         format.options = options;
-        if (curToken !== 44) { // ,
+        if (!isComma()) { // ,
             return buildError('Expecting ","');
         }
         advanceNextToken();
         skipWs();
-        while (curToken !== CloseBracketToken) {
+        while (!isCloseBracketToken()) {
             if (curToken < 0) {
                 return buildError('Expecting characters except "{", "#"');
             }
@@ -267,7 +278,7 @@ function parseFormat(): any {
             } else {
                 selector = chars;
             }
-            if (curToken !== OpenBracketToken) {
+            if (!isOpenBracketToken()) {
                 return buildError('Expecting "{"');
             }
             advanceNextToken();
