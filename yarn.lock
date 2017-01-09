@@ -4,12 +4,12 @@
 
 bobril@^4.46.0:
   version "4.49.2"
-  resolved "https://registry.yarnpkg.com/bobril/-/bobril-4.49.2.tgz#b4748f520f5d3ba797929e132675b9cb3aef4aab"
+  resolved "https://registry.npmjs.org/bobril/-/bobril-4.49.2.tgz#b4748f520f5d3ba797929e132675b9cb3aef4aab"
 
 moment@^2.10.6:
   version "2.17.1"
-  resolved "https://registry.yarnpkg.com/moment/-/moment-2.17.1.tgz#fed9506063f36b10f066c8b59a144d7faebe1d82"
+  resolved "https://registry.npmjs.org/moment/-/moment-2.17.1.tgz#fed9506063f36b10f066c8b59a144d7faebe1d82"
 
-numeral@^1.5.3:
-  version "1.5.6"
-  resolved "https://registry.yarnpkg.com/numeral/-/numeral-1.5.6.tgz#3831db968451b9cf6aff9bf95925f1ef8e37b33f"
+numeral@^2.0.4:
+  version "2.0.4"
+  resolved "https://registry.npmjs.org/numeral/-/numeral-2.0.4.tgz#545a0c709e090a9cf79bebec802b93f60061f038"
