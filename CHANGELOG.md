@@ -1,6 +1,12 @@
 CHANGELOG
 ===
 
+2.3.0
+--
+
+Upgraded numeral version to 2.0.4
+-
+
 2.2.0
 --
 

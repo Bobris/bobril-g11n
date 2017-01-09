@@ -151,7 +151,7 @@ declare var require: any;
 var numeral = require('numeral');
 
 export function unformatNumber(str: string): number {
-    return numeral().unformat(str);
+    return numeral(str).value();
 }
 
 export function registerTranslations(locale: string, localeDefs: any[], msgs: string[]): void {

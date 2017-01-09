@@ -11,16 +11,16 @@ function AnyFormatter(locale: string, type: string, style: string, options: Obje
     switch (type) {
         case 'number': {
             if (style === 'custom' && 'format' in options) {
-                return (val, opt) => { numeral.language(language); return numeral(val).format((<any>opt).format); };
+                return (val, opt) => { numeral.locale(language); return numeral(val).format((<any>opt).format); };
             }
             if (style === 'default') {
-                return (val, _opt) => { numeral.language(language); return numeral(val).format('0,0.[0000]') };
+                return (val, _opt) => { numeral.locale(language); return numeral(val).format('0,0.[0000]') };
             }
             if (style === 'percent') {
-                return (val, _opt) => { numeral.language(language); return numeral(val).format('0%') };
+                return (val, _opt) => { numeral.locale(language); return numeral(val).format('0%') };
             }
             if (style === 'bytes') {
-                return (val, _opt) => { numeral.language(language); return numeral(val).format('0b') };
+                return (val, _opt) => { numeral.locale(language); return numeral(val).format('0b') };
             }
             break;
         }

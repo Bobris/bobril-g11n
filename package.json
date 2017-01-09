@@ -9,7 +9,7 @@
   },
   "dependencies": {
     "moment": "^2.10.6",
-    "numeral": "^1.5.3"
+    "numeral": "^2.0.4"
   },
   "devDependencies": {
     "bobril": "^4.46.0"
