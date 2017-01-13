@@ -131,7 +131,7 @@ function getMoment(init, init2, init3) {
 exports.getMoment = getMoment;
 var numeral = require('numeral');
 function unformatNumber(str) {
-    return numeral().unformat(str);
+    return numeral(str).value();
 }
 exports.unformatNumber = unformatNumber;
 function registerTranslations(locale, localeDefs, msgs) {

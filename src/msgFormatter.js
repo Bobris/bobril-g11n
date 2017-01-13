@@ -9,16 +9,16 @@ function AnyFormatter(locale, type, style, options) {
     switch (type) {
         case 'number': {
             if (style === 'custom' && 'format' in options) {
-                return function (val, opt) { numeral.language(language); return numeral(val).format(opt.format); };
+                return function (val, opt) { numeral.locale(language); return numeral(val).format(opt.format); };
             }
             if (style === 'default') {
-                return function (val, _opt) { numeral.language(language); return numeral(val).format('0,0.[0000]'); };
+                return function (val, _opt) { numeral.locale(language); return numeral(val).format('0,0.[0000]'); };
             }
             if (style === 'percent') {
-                return function (val, _opt) { numeral.language(language); return numeral(val).format('0%'); };
+                return function (val, _opt) { numeral.locale(language); return numeral(val).format('0%'); };
             }
             if (style === 'bytes') {
-                return function (val, _opt) { numeral.language(language); return numeral(val).format('0b'); };
+                return function (val, _opt) { numeral.locale(language); return numeral(val).format('0b'); };
             }
             break;
         }

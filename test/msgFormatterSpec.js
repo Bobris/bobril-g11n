@@ -23,7 +23,7 @@ if (!Object.assign) {
 var numeral = require('numeral');
 var moment = require('moment');
 var msgFormatParser = require("../src/msgFormatParser");
-var msgFormatter = require('../src/msgFormatter');
+var msgFormatter = require("../src/msgFormatter");
 describe('modules', function () {
     it('numeral works', function () {
         expect(numeral(0).format()).toBe('0');
@@ -62,6 +62,21 @@ describe('Formatter', function () {
         check('{arg, number}', { arg: 1000 }, '1,000');
         check('{arg, number}', { arg: 1.234 }, '1.234');
         check('{arg, number, percent}', { arg: 0.23 }, '23%');
+        check('{arg, number, custom, format:{0,0.0}}', { arg: 123456.78 }, '123,456.8');
+        check('{arg, number, custom, format:{0,0.0[00]}}', { arg: 123456.78 }, '123,456.78');
+        check('{arg, number, custom, format:{0,0.0[00]}}', { arg: 12 }, '12.0');
+        check('{arg, number, custom, format:{0,0.0[00]}}', { arg: 12.1111 }, '12.111');
+        check('{arg, number, custom, format:{0.0}}', { arg: 123456.78 }, '123456.8');
+        check('{arg, number, custom, format:{0}}', { arg: 123456.78 }, '123457');
+        check('{arg, number, custom, format:{-0}}', { arg: -1 }, '-1');
+        check('{arg, number, custom, format:{(0)}}', { arg: -1 }, '(1)');
+        check('{arg, number, custom, format:{0%}}', { arg: 0.5 }, '50%');
+        check('{arg, number, bytes}', { arg: 1000 }, '1KB');
+        check('{arg, number, bytes}', { arg: 999 }, '999B');
+        check('{arg, number, bytes}', { arg: 1001 }, '1KB');
+        check('{arg, number, bytes}', { arg: 999999 }, '1000KB');
+        check('{arg, number, bytes}', { arg: 1000000 }, '1MB');
+        check('{arg, number, custom, format:{0b}}', { arg: 1 }, '1B');
     });
     it('date', function () {
         check('{a, date, dddd}', { a: new Date(2000, 0, 2) }, 'Sunday');
