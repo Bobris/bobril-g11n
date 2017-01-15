@@ -1,26 +1,38 @@
 import { RuntimeFunctionGenerator } from './RuntimeFunctionGenerator';
 import * as localeDataStorage from './localeDataStorage';
+import * as numberFormatter from './numberFormatter';
 
 declare var require: any;
-var numeral = require('numeral');
 var moment = require('moment');
 (<any>window).moment = moment;
 
+var numberFormatterCache: { [locale_format: string]: (val: number) => string } = Object.create(null);
+
+function getFormatter(locale: string, format: string): (val: number) => string {
+    const key = locale + '|' + format;
+    let res = numberFormatterCache[key];
+    if (res) return res;
+    res = numberFormatter.buildFormatter(localeDataStorage.getRules(locale), format);
+    numberFormatterCache[key] = res;
+    return res;
+}
+
 function AnyFormatter(locale: string, type: string, style: string, options: Object): (value: any, options: Object) => string {
-    let language = localeDataStorage.getLanguageFromLocale(locale);
     switch (type) {
         case 'number': {
             if (style === 'custom' && 'format' in options) {
-                return (val, opt) => { numeral.locale(language); return numeral(val).format((<any>opt).format); };
+                if ((options as any).format === null)
+                    return (val, opt) => { return getFormatter(locale, (opt as any).format)(val); };
+                return getFormatter(locale, (options as any).format);
             }
             if (style === 'default') {
-                return (val, _opt) => { numeral.locale(language); return numeral(val).format('0,0.[0000]') };
+                return getFormatter(locale, '0,0.[0000]');
             }
             if (style === 'percent') {
-                return (val, _opt) => { numeral.locale(language); return numeral(val).format('0%') };
+                return getFormatter(locale, '0%');
             }
             if (style === 'bytes') {
-                return (val, _opt) => { numeral.locale(language); return numeral(val).format('0b') };
+                return getFormatter(locale, '0b');
             }
             break;
         }
@@ -81,7 +93,7 @@ export function compile(locale: string, msgAst: any): (params: Object, hashArg?:
             let comp = new RuntimeFunctionGenerator();
             let argParams = comp.addArg(0);
             let localArg = comp.addLocal();
-            comp.addBody(`var ${localArg}=${argParams}[${comp.addConstant(msgAst.id) }];`);
+            comp.addBody(`var ${localArg}=${argParams}[${comp.addConstant(msgAst.id)}];`);
             let type = msgAst.format.type;
             switch (type) {
                 case 'plural':
@@ -96,14 +108,14 @@ export function compile(locale: string, msgAst: any): (params: Object, hashArg?:
                             comp.addBody(`if (${localArgOffset}===${opt.selector}) return ${fn}(${argParams},''+${localArgOffset});`);
                         }
                         let localCase = comp.addLocal();
-                        let pluralFn = comp.addConstant(localeDataStorage.getPluralRule(locale));
+                        let pluralFn = comp.addConstant(localeDataStorage.getRules(locale).pluralFn);
                         comp.addBody(`var ${localCase}=${pluralFn}(${localArgOffset},${msgAst.format.ordinal ? 'true' : 'false'});`);
                         for (let i = 0; i < options.length; i++) {
                             let opt = options[i];
                             if (typeof opt.selector !== 'string') continue;
                             if (opt.selector === 'other') continue;
                             let fn = comp.addConstant(compile(locale, opt.value));
-                            comp.addBody(`if (${localCase}===${comp.addConstant(opt.selector) }) return ${fn}(${argParams},''+${localArgOffset});`);
+                            comp.addBody(`if (${localCase}===${comp.addConstant(opt.selector)}) return ${fn}(${argParams},''+${localArgOffset});`);
                         }
                         for (let i = 0; i < options.length; i++) {
                             let opt = options[i];
@@ -121,7 +133,7 @@ export function compile(locale: string, msgAst: any): (params: Object, hashArg?:
                             if (typeof opt.selector !== 'string') continue;
                             if (opt.selector === 'other') continue;
                             let fn = comp.addConstant(compile(locale, opt.value));
-                            comp.addBody(`if (${localArg}===${comp.addConstant(opt.selector) }) return ${fn}(${argParams},${localArg});`);
+                            comp.addBody(`if (${localArg}===${comp.addConstant(opt.selector)}) return ${fn}(${argParams},${localArg});`);
                         }
                         for (let i = 0; i < options.length; i++) {
                             let opt = options[i];
@@ -159,12 +171,12 @@ export function compile(locale: string, msgAst: any): (params: Object, hashArg?:
                                 for (let i = 0; i < options.length; i++) {
                                     if (typeof options[i].value === 'object') {
                                         let fnConst = comp.addConstant(compile(locale, options[i].value));
-                                        comp.addBody(`${optLocal}[${comp.addConstant(options[i].key) }]=${fnConst}(${argParams},${hashArg});`);
+                                        comp.addBody(`${optLocal}[${comp.addConstant(options[i].key)}]=${fnConst}(${argParams},${hashArg});`);
                                     }
                                 }
                                 comp.addBody(`return ${formatFn}(${localArg},${optLocal});`);
                             } else {
-                                comp.addBody(`return ${formatFn}(${localArg},${comp.addConstant(opt) });`);
+                                comp.addBody(`return ${formatFn}(${localArg},${comp.addConstant(opt)});`);
                             }
                         } else {
                             let formatFn = comp.addConstant(AnyFormatter(locale, type, style, {}));

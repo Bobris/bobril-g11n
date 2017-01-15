@@ -1,6 +1,6 @@
 {
   "name": "bobril-g11n",
-  "version": "2.3.0",
+  "version": "3.0.0",
   "description": "Bobril globalization",
   "main": "index.js",
   "types": "index.d.ts",
@@ -8,8 +8,7 @@
     "main": "index.ts"
   },
   "dependencies": {
-    "moment": "^2.10.6",
-    "numeral": "^2.0.4"
+    "moment": "^2.10.6"
   },
   "devDependencies": {
     "bobril": "^4.46.0"

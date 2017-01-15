@@ -16,16 +16,12 @@ if (!Object.assign) {
 }
 
 declare var require: any;
-var numeral = require('numeral');
 var moment = require('moment');
 
 import * as msgFormatParser from "../src/msgFormatParser";
 import * as msgFormatter from '../src/msgFormatter';
 
 describe('modules', () => {
-    it('numeral works', () => {
-        expect(numeral(0).format()).toBe('0');
-    });
     it('moment works', () => {
         expect(moment(new Date(2000, 0, 1)).format('LTS')).toBe('12:00:00 AM');
     });

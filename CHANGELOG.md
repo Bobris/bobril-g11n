@@ -1,6 +1,13 @@
 CHANGELOG
 ===
 
+3.0.0
+--
+
+Breaking change needs bobril-build 0.57+.
+
+Removed dependency on numeral, make code shorter, but also faster. It has slightly less features, so if you missing some please add failing test.
+
 2.3.0
 --
 

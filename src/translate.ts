@@ -3,6 +3,7 @@ import * as msgFormatParser from "./msgFormatParser";
 import * as msgFormatter from './msgFormatter';
 import { jsonp } from './jsonp';
 import * as localeDataStorage from './localeDataStorage';
+import * as numberFormatter from './numberFormatter';
 
 declare var b: {
     setBeforeInit(callback: (cb: () => void) => void): void;
@@ -27,6 +28,8 @@ let loadedLocales: { [name: string]: boolean } = newMap();
 let registeredTranslations: { [name: string]: string[] } = newMap();
 let initWasStarted = false;
 let currentLocale = '';
+let currentRules: localeDataStorage.ILocaleRules = localeDataStorage.getRules("en");
+let currentUnformatter: ((val: string) => number) | undefined;
 let currentTranslations: string[] = [];
 let currentCachedFormat: IMessageFormat[] = [];
 let stringCachedFormats: { [input: string]: IMessageFormat } = newMap();
@@ -126,7 +129,9 @@ export function setLocale(locale: string): Promise<void> {
     }
     prom = prom.then(() => {
         currentLocale = locale;
+        currentRules = localeDataStorage.getRules(locale);
         currentTranslations = registeredTranslations[locale] || [];
+        currentUnformatter = undefined;
         currentCachedFormat = [];
         currentCachedFormat.length = currentTranslations.length;
         stringCachedFormats = newMap();
@@ -147,16 +152,16 @@ export function getMoment(init?: any, init2?: any, init3?: any): moment.Moment {
     return momentInstance.clone();
 }
 
-declare var require: any;
-var numeral = require('numeral');
-
 export function unformatNumber(str: string): number {
-    return numeral(str).value();
+    if (currentUnformatter === undefined) {
+        currentUnformatter = numberFormatter.buildUnformat(currentRules);
+    }
+    return currentUnformatter(str);
 }
 
 export function registerTranslations(locale: string, localeDefs: any[], msgs: string[]): void {
     if (Array.isArray(localeDefs)) {
-        if (localeDefs.length >= 1) localeDataStorage.setPluralRule(locale, localeDefs[0]);
+        localeDataStorage.setRules(locale, localeDefs);
     }
     if (Array.isArray(msgs))
         registeredTranslations[locale] = msgs;
