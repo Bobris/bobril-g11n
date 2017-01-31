@@ -1,6 +1,11 @@
 CHANGELOG
 ===
 
+3.1.0
+--
+
+Added feature to turn on/off preview of translated texts. When turned on, texts that are translated will be encapsulated by [].
+
 3.0.0
 --
 
