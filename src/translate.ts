@@ -1,5 +1,5 @@
 /// <reference path="../typings/moment/moment-node.d.ts" />
-import * as msgFormatParser from "./msgFormatParser";
+import * as msgFormatParser from './msgFormatParser';
 import * as msgFormatter from './msgFormatter';
 import { jsonp } from './jsonp';
 import * as localeDataStorage from './localeDataStorage';
@@ -13,6 +13,7 @@ declare var b: {
 export interface IG11NConfig {
     defaultLocale?: string;
     pathToTranslation?: (locale: string) => string | undefined;
+    shouldPreviewTranslations?: boolean;
 }
 
 interface IMessageFormat {
@@ -23,7 +24,12 @@ function newMap(): any {
     return Object.create(null);
 }
 
-let cfg: IG11NConfig = { defaultLocale: "en-US", pathToTranslation: () => undefined };
+let cfg: IG11NConfig = { 
+    defaultLocale: "en-US", 
+    pathToTranslation: () => undefined, 
+    shouldPreviewTranslations: false 
+};
+
 let loadedLocales: { [name: string]: boolean } = newMap();
 let registeredTranslations: { [name: string]: string[] } = newMap();
 let initWasStarted = false;
@@ -51,6 +57,13 @@ function currentTranslationMessage(message: number): string {
     return text;
 }
 
+function formatTranslatedString(translated: string){
+    if (!cfg.shouldPreviewTranslations)
+        return translated;
+
+    return '[' + translated + ']';
+}
+
 export function t(message: string | number, params?: Object, _translationHelp?: string): string {
     if (currentLocale.length === 0) {
         throw new Error('before using t you need to wait for initialization of g11n');
@@ -58,7 +71,7 @@ export function t(message: string | number, params?: Object, _translationHelp?: 
     let format: IMessageFormat;
     if (typeof message === 'number') {
         if (params == null) {
-            return currentTranslationMessage(message);
+            return formatTranslatedString(currentTranslationMessage(message));
         }
         format = currentCachedFormat[message];
         if (format === undefined) {
@@ -70,7 +83,7 @@ export function t(message: string | number, params?: Object, _translationHelp?: 
             currentCachedFormat[message] = format;
         }
     } else {
-        if (params == null) return message;
+        if (params == null) return formatTranslatedString(message);
         format = stringCachedFormats[message];
         if (format === undefined) {
             let ast = msgFormatParser.parse(message);
@@ -81,7 +94,7 @@ export function t(message: string | number, params?: Object, _translationHelp?: 
             stringCachedFormats[message] = format;
         }
     }
-    return format(params);
+    return formatTranslatedString(format(params));
 }
 
 export function f(message: string, params: Object): string {
@@ -167,6 +180,15 @@ export function registerTranslations(locale: string, localeDefs: any[], msgs: st
         registeredTranslations[locale] = msgs;
     loadedLocales[locale] = true;
 }
+
+export function setPreview(isPreviewEnabled: boolean){
+    cfg.shouldPreviewTranslations = isPreviewEnabled;
+}
+
+export function getPreview(){
+    return cfg.shouldPreviewTranslations;
+}
+
 
 if (window)
     (<any>window)['bobrilRegisterTranslations'] = registerTranslations;
