@@ -15,8 +15,7 @@ if (!Object.assign) {
     }
 }
 
-declare var require: any;
-var moment = require('moment');
+import * as moment from 'moment';
 
 import * as msgFormatParser from "../src/msgFormatParser";
 import * as msgFormatter from '../src/msgFormatter';

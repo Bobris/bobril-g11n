@@ -1,4 +1,3 @@
-import 'moment';
 import * as msgFormatParser from "../src/msgFormatParser";
 import * as extractUsedParams from "../src/extractUsedParams";
 
