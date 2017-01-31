@@ -10,16 +10,16 @@ describe('translate', () => {
 
     describe('translations preview', () => {
         it('is not enabled by default', () => {
-            expect(translate.getPreview()).toBeFalsy();
+            expect(translate.getTranslationPreview()).toBeFalsy();
         });
 
         it('if enabled should encapsulate text with brackets', () => {
-            translate.setPreview(true);
+            translate.setTranslationPreview(true);
             expect(translate.t("text to translate")).toBe("[text to translate]");
         });
 
         it('if disabled should leave the text as is', () => {
-            translate.setPreview(false);
+            translate.setTranslationPreview(false);
             expect(translate.t("text to translate")).toBe("text to translate");
         });
     });
