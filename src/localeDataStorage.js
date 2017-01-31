@@ -6,18 +6,14 @@ defs['en'] = {
         if (ord)
             return n10 == 1 && n100 != 11 ? "one" : n10 == 2 && n100 != 12 ? "two" : n10 == 3 && n100 != 13 ? "few" : "other";
         return n == 1 && v0 ? "one" : "other";
-    }
+    },
+    td: ",",
+    dd: "."
 };
-function setPluralRule(locale, pluralFn) {
-    var d = defs[locale];
-    if (d === undefined) {
-        d = { pluralFn: pluralFn };
-    }
-    else
-        d.pluralFn = pluralFn;
-    defs[locale] = d;
+function setRules(locale, params) {
+    defs[locale] = { pluralFn: params[0], td: params[1], dd: params[2] };
 }
-exports.setPluralRule = setPluralRule;
+exports.setRules = setRules;
 function getLanguageFromLocale(locale) {
     var idx = locale.indexOf('-');
     if (idx >= 0)
@@ -25,7 +21,7 @@ function getLanguageFromLocale(locale) {
     return locale;
 }
 exports.getLanguageFromLocale = getLanguageFromLocale;
-function getPluralRule(locale) {
+function getRules(locale) {
     var d = defs[locale];
     if (!d) {
         d = defs[getLanguageFromLocale(locale)];
@@ -33,6 +29,6 @@ function getPluralRule(locale) {
             d = defs['en'];
         }
     }
-    return d.pluralFn;
+    return d;
 }
-exports.getPluralRule = getPluralRule;
+exports.getRules = getRules;

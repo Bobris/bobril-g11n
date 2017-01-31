@@ -4,14 +4,21 @@ var msgFormatParser = require("./msgFormatParser");
 var msgFormatter = require("./msgFormatter");
 var jsonp_1 = require("./jsonp");
 var localeDataStorage = require("./localeDataStorage");
+var numberFormatter = require("./numberFormatter");
+var spyTranslationFunc;
 function newMap() {
     return Object.create(null);
 }
-var cfg = { defaultLocale: "en-US", pathToTranslation: function () { return undefined; } };
+var cfg = {
+    defaultLocale: "en-US",
+    pathToTranslation: function () { return undefined; }
+};
 var loadedLocales = newMap();
 var registeredTranslations = newMap();
 var initWasStarted = false;
 var currentLocale = '';
+var currentRules = localeDataStorage.getRules("en");
+var currentUnformatter;
 var currentTranslations = [];
 var currentCachedFormat = [];
 var stringCachedFormats = newMap();
@@ -29,6 +36,11 @@ function currentTranslationMessage(message) {
     }
     return text;
 }
+function spyTranslatedString(translated) {
+    if (spyTranslationFunc === undefined)
+        return translated;
+    return spyTranslationFunc(translated);
+}
 function t(message, params, _translationHelp) {
     if (currentLocale.length === 0) {
         throw new Error('before using t you need to wait for initialization of g11n');
@@ -36,7 +48,7 @@ function t(message, params, _translationHelp) {
     var format;
     if (typeof message === 'number') {
         if (params == null) {
-            return currentTranslationMessage(message);
+            return spyTranslatedString(currentTranslationMessage(message));
         }
         format = currentCachedFormat[message];
         if (format === undefined) {
@@ -50,7 +62,7 @@ function t(message, params, _translationHelp) {
     }
     else {
         if (params == null)
-            return message;
+            return spyTranslatedString(message);
         format = stringCachedFormats[message];
         if (format === undefined) {
             var ast = msgFormatParser.parse(message);
@@ -61,7 +73,7 @@ function t(message, params, _translationHelp) {
             stringCachedFormats[message] = format;
         }
     }
-    return format(params);
+    return spyTranslatedString(format(params));
 }
 exports.t = t;
 function f(message, params) {
@@ -108,7 +120,9 @@ function setLocale(locale) {
     }
     prom = prom.then(function () {
         currentLocale = locale;
+        currentRules = localeDataStorage.getRules(locale);
         currentTranslations = registeredTranslations[locale] || [];
+        currentUnformatter = undefined;
         currentCachedFormat = [];
         currentCachedFormat.length = currentTranslations.length;
         stringCachedFormats = newMap();
@@ -129,20 +143,35 @@ function getMoment(init, init2, init3) {
     return momentInstance.clone();
 }
 exports.getMoment = getMoment;
-var numeral = require('numeral');
 function unformatNumber(str) {
-    return numeral(str).value();
+    if (currentUnformatter === undefined) {
+        currentUnformatter = numberFormatter.buildUnformat(currentRules);
+    }
+    return currentUnformatter(str);
 }
 exports.unformatNumber = unformatNumber;
 function registerTranslations(locale, localeDefs, msgs) {
     if (Array.isArray(localeDefs)) {
-        if (localeDefs.length >= 1)
-            localeDataStorage.setPluralRule(locale, localeDefs[0]);
+        localeDataStorage.setRules(locale, localeDefs);
     }
     if (Array.isArray(msgs))
         registeredTranslations[locale] = msgs;
     loadedLocales[locale] = true;
 }
 exports.registerTranslations = registerTranslations;
-if (window)
+function spyTranslation(spyFn) {
+    if (spyFn === undefined)
+        return spyTranslationFunc;
+    if (spyFn === null) {
+        spyTranslationFunc = undefined;
+    }
+    else {
+        spyTranslationFunc = spyFn;
+    }
+    return spyTranslationFunc;
+}
+exports.spyTranslation = spyTranslation;
+if (window) {
     window['bobrilRegisterTranslations'] = registerTranslations;
+    window['b'].spyTr = spyTranslation;
+}

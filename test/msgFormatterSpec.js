@@ -20,14 +20,10 @@ if (!Object.assign) {
         return target;
     };
 }
-var numeral = require('numeral');
-var moment = require('moment');
+var moment = require("moment");
 var msgFormatParser = require("../src/msgFormatParser");
 var msgFormatter = require("../src/msgFormatter");
 describe('modules', function () {
-    it('numeral works', function () {
-        expect(numeral(0).format()).toBe('0');
-    });
     it('moment works', function () {
         expect(moment(new Date(2000, 0, 1)).format('LTS')).toBe('12:00:00 AM');
     });

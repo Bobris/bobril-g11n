@@ -1,4 +1,4 @@
-import 'bobril'; // For Promise polyfill
+import 'bobril'; // For Promise polyfill and b in window
 import * as translate from "../src/translate";
 
 describe('translate', () => {
@@ -10,16 +10,16 @@ describe('translate', () => {
 
     describe('translations preview', () => {
         it('is not enabled by default', () => {
-            expect(translate.getTranslationPreview()).toBeFalsy();
+            expect(translate.spyTranslation()).toBeUndefined();
         });
 
         it('if enabled should encapsulate text with brackets', () => {
-            translate.setTranslationPreview(true);
+            translate.spyTranslation(t => `[${t}]`);
             expect(translate.t("text to translate")).toBe("[text to translate]");
         });
 
         it('if disabled should leave the text as is', () => {
-            translate.setTranslationPreview(false);
+            translate.spyTranslation(null);
             expect(translate.t("text to translate")).toBe("text to translate");
         });
     });

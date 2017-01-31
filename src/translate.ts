@@ -13,8 +13,9 @@ declare var b: {
 export interface IG11NConfig {
     defaultLocale?: string;
     pathToTranslation?: (locale: string) => string | undefined;
-    isTranslationPreviewEnabled?: boolean;
 }
+
+let spyTranslationFunc: ((text: string) => string) | undefined;
 
 interface IMessageFormat {
     (params?: Object): string;
@@ -24,10 +25,9 @@ function newMap(): any {
     return Object.create(null);
 }
 
-let cfg: IG11NConfig = { 
-    defaultLocale: "en-US", 
-    pathToTranslation: () => undefined, 
-    isTranslationPreviewEnabled: false 
+let cfg: IG11NConfig = {
+    defaultLocale: "en-US",
+    pathToTranslation: () => undefined
 };
 
 let loadedLocales: { [name: string]: boolean } = newMap();
@@ -57,11 +57,11 @@ function currentTranslationMessage(message: number): string {
     return text;
 }
 
-function formatTranslatedString(translated: string){
-    if (!cfg.isTranslationPreviewEnabled)
+function spyTranslatedString(translated: string) {
+    if (spyTranslationFunc === undefined)
         return translated;
 
-    return '[' + translated + ']';
+    return spyTranslationFunc(translated);
 }
 
 export function t(message: string | number, params?: Object, _translationHelp?: string): string {
@@ -71,7 +71,7 @@ export function t(message: string | number, params?: Object, _translationHelp?: 
     let format: IMessageFormat;
     if (typeof message === 'number') {
         if (params == null) {
-            return formatTranslatedString(currentTranslationMessage(message));
+            return spyTranslatedString(currentTranslationMessage(message));
         }
         format = currentCachedFormat[message];
         if (format === undefined) {
@@ -83,7 +83,7 @@ export function t(message: string | number, params?: Object, _translationHelp?: 
             currentCachedFormat[message] = format;
         }
     } else {
-        if (params == null) return formatTranslatedString(message);
+        if (params == null) return spyTranslatedString(message);
         format = stringCachedFormats[message];
         if (format === undefined) {
             let ast = msgFormatParser.parse(message);
@@ -94,7 +94,7 @@ export function t(message: string | number, params?: Object, _translationHelp?: 
             stringCachedFormats[message] = format;
         }
     }
-    return formatTranslatedString(format(params));
+    return spyTranslatedString(format(params));
 }
 
 export function f(message: string, params: Object): string {
@@ -181,14 +181,19 @@ export function registerTranslations(locale: string, localeDefs: any[], msgs: st
     loadedLocales[locale] = true;
 }
 
-export function setTranslationPreview(isPreviewEnabled: boolean) {
-    cfg.isTranslationPreviewEnabled = isPreviewEnabled;
+export function spyTranslation(spyFn?: ((text: string) => string) | null): ((text: string) => string) | undefined {
+    if (spyFn === undefined)
+        return spyTranslationFunc;
+    if (spyFn === null) {
+        spyTranslationFunc = undefined;
+    }
+    else {
+        spyTranslationFunc = spyFn;
+    }
+    return spyTranslationFunc;
 }
 
-export function getTranslationPreview() {
-    return cfg.isTranslationPreviewEnabled;
-}
-
-
-if (window)
+if (window) {
     (<any>window)['bobrilRegisterTranslations'] = registerTranslations;
+    (<any>window)['b'].spyTr = spyTranslation;
+}
