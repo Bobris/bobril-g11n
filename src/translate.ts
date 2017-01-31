@@ -13,7 +13,7 @@ declare var b: {
 export interface IG11NConfig {
     defaultLocale?: string;
     pathToTranslation?: (locale: string) => string | undefined;
-    shouldPreviewTranslations?: boolean;
+    isTranslationPreviewEnabled?: boolean;
 }
 
 interface IMessageFormat {
@@ -27,7 +27,7 @@ function newMap(): any {
 let cfg: IG11NConfig = { 
     defaultLocale: "en-US", 
     pathToTranslation: () => undefined, 
-    shouldPreviewTranslations: false 
+    isTranslationPreviewEnabled: false 
 };
 
 let loadedLocales: { [name: string]: boolean } = newMap();
@@ -58,7 +58,7 @@ function currentTranslationMessage(message: number): string {
 }
 
 function formatTranslatedString(translated: string){
-    if (!cfg.shouldPreviewTranslations)
+    if (!cfg.isTranslationPreviewEnabled)
         return translated;
 
     return '[' + translated + ']';
@@ -181,12 +181,12 @@ export function registerTranslations(locale: string, localeDefs: any[], msgs: st
     loadedLocales[locale] = true;
 }
 
-export function setPreview(isPreviewEnabled: boolean){
-    cfg.shouldPreviewTranslations = isPreviewEnabled;
+export function setTranslationPreview(isPreviewEnabled: boolean) {
+    cfg.isTranslationPreviewEnabled = isPreviewEnabled;
 }
 
-export function getPreview(){
-    return cfg.shouldPreviewTranslations;
+export function getTranslationPreview() {
+    return cfg.isTranslationPreviewEnabled;
 }
 
 
