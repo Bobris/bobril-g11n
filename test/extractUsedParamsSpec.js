@@ -1,6 +1,4 @@
 "use strict";
-require("numeral");
-require("moment");
 var msgFormatParser = require("../src/msgFormatParser");
 var extractUsedParams = require("../src/extractUsedParams");
 describe('Params Extractor', function () {

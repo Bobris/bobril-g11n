@@ -1,24 +1,35 @@
 "use strict";
 var RuntimeFunctionGenerator_1 = require("./RuntimeFunctionGenerator");
 var localeDataStorage = require("./localeDataStorage");
-var numeral = require('numeral');
+var numberFormatter = require("./numberFormatter");
 var moment = require('moment');
 window.moment = moment;
+var numberFormatterCache = Object.create(null);
+function getFormatter(locale, format) {
+    var key = locale + '|' + format;
+    var res = numberFormatterCache[key];
+    if (res)
+        return res;
+    res = numberFormatter.buildFormatter(localeDataStorage.getRules(locale), format);
+    numberFormatterCache[key] = res;
+    return res;
+}
 function AnyFormatter(locale, type, style, options) {
-    var language = localeDataStorage.getLanguageFromLocale(locale);
     switch (type) {
         case 'number': {
             if (style === 'custom' && 'format' in options) {
-                return function (val, opt) { numeral.locale(language); return numeral(val).format(opt.format); };
+                if (options.format === null)
+                    return function (val, opt) { return getFormatter(locale, opt.format)(val); };
+                return getFormatter(locale, options.format);
             }
             if (style === 'default') {
-                return function (val, _opt) { numeral.locale(language); return numeral(val).format('0,0.[0000]'); };
+                return getFormatter(locale, '0,0.[0000]');
             }
             if (style === 'percent') {
-                return function (val, _opt) { numeral.locale(language); return numeral(val).format('0%'); };
+                return getFormatter(locale, '0%');
             }
             if (style === 'bytes') {
-                return function (val, _opt) { numeral.locale(language); return numeral(val).format('0b'); };
+                return getFormatter(locale, '0b');
             }
             break;
         }
@@ -98,7 +109,7 @@ function compile(locale, msgAst) {
                             comp.addBody("if (" + localArgOffset + "===" + opt.selector + ") return " + fn + "(" + argParams + ",''+" + localArgOffset + ");");
                         }
                         var localCase = comp.addLocal();
-                        var pluralFn = comp.addConstant(localeDataStorage.getPluralRule(locale));
+                        var pluralFn = comp.addConstant(localeDataStorage.getRules(locale).pluralFn);
                         comp.addBody("var " + localCase + "=" + pluralFn + "(" + localArgOffset + "," + (msgAst.format.ordinal ? 'true' : 'false') + ");");
                         for (var i = 0; i < options.length; i++) {
                             var opt = options[i];
