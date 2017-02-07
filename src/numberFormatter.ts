@@ -2,8 +2,9 @@ import { ILocaleRules } from "./localeDataStorage";
 import { RuntimeFunctionGenerator } from "./RuntimeFunctionGenerator";
 
 export function buildFormatter(rules: ILocaleRules, format: string): (val: number) => string {
-    if (format == "0b") {
+    if (format == "0b" || format == "0 b") {
         const suffixes = ['B', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
+        const space = format == "0 b" ? "\xa0" : "";
         return (val: number) => {
             let suffix = "";
             for (let power = 0; power <= suffixes.length; power++) {
@@ -17,7 +18,7 @@ export function buildFormatter(rules: ILocaleRules, format: string): (val: numbe
                     break;
                 }
             }
-            return val.toFixed(0) + suffix;
+            return val.toFixed(0) + space + suffix;
         };
     }
     if (format.indexOf("%") >= 0) {

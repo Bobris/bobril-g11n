@@ -1,8 +1,9 @@
 "use strict";
 var RuntimeFunctionGenerator_1 = require("./RuntimeFunctionGenerator");
 function buildFormatter(rules, format) {
-    if (format == "0b") {
+    if (format == "0b" || format == "0 b") {
         var suffixes_1 = ['B', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
+        var space_1 = format == "0 b" ? "\xa0" : "";
         return function (val) {
             var suffix = "";
             for (var power = 0; power <= suffixes_1.length; power++) {
@@ -16,7 +17,7 @@ function buildFormatter(rules, format) {
                     break;
                 }
             }
-            return val.toFixed(0) + suffix;
+            return val.toFixed(0) + space_1 + suffix;
         };
     }
     if (format.indexOf("%") >= 0) {

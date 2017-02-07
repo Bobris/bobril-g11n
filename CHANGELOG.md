@@ -1,6 +1,11 @@
 CHANGELOG
 ===
 
+3.2.0
+--
+
+Reintroduce number format "0 b", but with nonbreakable space in output which makes more sence.
+
 3.1.0
 --
 

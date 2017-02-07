@@ -1,5 +1,5 @@
 "use strict";
-require("bobril"); // For Promise polyfill
+require("bobril"); // For Promise polyfill and b in window
 var translate = require("../src/translate");
 describe('translate', function () {
     it('unformat works', function () {

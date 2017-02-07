@@ -73,6 +73,7 @@ describe('Formatter', function () {
         check('{arg, number, bytes}', { arg: 999999 }, '1000KB');
         check('{arg, number, bytes}', { arg: 1000000 }, '1MB');
         check('{arg, number, custom, format:{0b}}', { arg: 1 }, '1B');
+        check('{arg, number, custom, format:{0 b}}', { arg: 1 }, '1\xA0B');
     });
     it('date', function () {
         check('{a, date, dddd}', { a: new Date(2000, 0, 2) }, 'Sunday');
