@@ -1,5 +1,10 @@
 "use strict";
 var RuntimeFunctionGenerator_1 = require("./RuntimeFunctionGenerator");
+var escapeRegExpMatcher = /[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g;
+function escapeRegExp(str) {
+    return str.replace(escapeRegExpMatcher, "\\$&");
+}
+exports.escapeRegExp = escapeRegExp;
 function buildFormatter(rules, format) {
     if (format == "0b" || format == "0 b") {
         var suffixes_1 = ['B', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
@@ -99,7 +104,7 @@ function buildFormatter(rules, format) {
 }
 exports.buildFormatter = buildFormatter;
 function buildUnformat(rules) {
-    var tdMatcher = new RegExp(rules.td, "g");
+    var tdMatcher = new RegExp(escapeRegExp(rules.td), "g");
     var dd = rules.dd;
     return function (val) {
         var coef = 1;

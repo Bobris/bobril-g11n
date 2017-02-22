@@ -2,14 +2,10 @@
 # yarn lockfile v1
 
 
-bobril@^4.46.0:
-  version "4.49.2"
-  resolved "https://registry.npmjs.org/bobril/-/bobril-4.49.2.tgz#b4748f520f5d3ba797929e132675b9cb3aef4aab"
+bobril@*:
+  version "5.5.0"
+  resolved "https://registry.yarnpkg.com/bobril/-/bobril-5.5.0.tgz#366cd6baf2c2b9d342bc738b4e7e5f6b50d8138e"
 
 moment@^2.10.6:
   version "2.17.1"
-  resolved "https://registry.npmjs.org/moment/-/moment-2.17.1.tgz#fed9506063f36b10f066c8b59a144d7faebe1d82"
-
-numeral@^2.0.4:
-  version "2.0.4"
-  resolved "https://registry.npmjs.org/numeral/-/numeral-2.0.4.tgz#545a0c709e090a9cf79bebec802b93f60061f038"
+  resolved "https://registry.yarnpkg.com/moment/-/moment-2.17.1.tgz#fed9506063f36b10f066c8b59a144d7faebe1d82"

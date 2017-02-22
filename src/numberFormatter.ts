@@ -1,6 +1,12 @@
 import { ILocaleRules } from "./localeDataStorage";
 import { RuntimeFunctionGenerator } from "./RuntimeFunctionGenerator";
 
+const escapeRegExpMatcher = /[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g;
+
+export function escapeRegExp(str: string): string {
+    return str.replace(escapeRegExpMatcher, "\\$&");
+}
+
 export function buildFormatter(rules: ILocaleRules, format: string): (val: number) => string {
     if (format == "0b" || format == "0 b") {
         const suffixes = ['B', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
@@ -93,7 +99,7 @@ export function buildFormatter(rules: ILocaleRules, format: string): (val: numbe
 }
 
 export function buildUnformat(rules: ILocaleRules): (val: string) => number {
-    const tdMatcher = new RegExp("\\"+rules.td, "g");
+    const tdMatcher = new RegExp(escapeRegExp(rules.td), "g");
     const dd = rules.dd;
     return (val: string) => {
         var coef = 1;

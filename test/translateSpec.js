@@ -1,6 +1,17 @@
 "use strict";
 require("bobril"); // For Promise polyfill and b in window
 var translate = require("../src/translate");
+var numberFormatter = require("../src/numberFormatter");
+describe('numberFormatter', function () {
+    it('unformat works with . as thousands separator', function () {
+        var rules = {
+            pluralFn: function () { return ""; },
+            td: ".",
+            dd: ","
+        };
+        expect(numberFormatter.buildUnformat(rules)("-1.234,56")).toBe(-1234.56);
+    });
+});
 describe('translate', function () {
     it('unformat works', function () {
         expect(translate.unformatNumber("-1,234.56")).toBe(-1234.56);

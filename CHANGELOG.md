@@ -1,6 +1,11 @@
 CHANGELOG
 ===
 
+3.3.0
+--
+
+Improved upon previous fix by using and exporting useful escapeRegExp function.
+
 3.2.1
 --
 
