@@ -1,6 +1,11 @@
 CHANGELOG
 ===
 
+3.2.1
+--
+
+Fixes bug with unformating number in locales with . as thousands separator 
+
 3.2.0
 --
 
