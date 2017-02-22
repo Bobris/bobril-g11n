@@ -1,5 +1,17 @@
 import 'bobril'; // For Promise polyfill and b in window
 import * as translate from "../src/translate";
+import * as numberFormatter from "../src/numberFormatter";
+
+describe('numberFormatter', () => {
+    it('unformat works with . as thousands separator', () => {
+        let rules = {
+            pluralFn(){return "";}, //stub
+            td: ".",
+            dd: ","
+        }
+        expect(numberFormatter.buildUnformat(rules)("-1.234,56")).toBe(-1234.56);
+    });
+});
 
 describe('translate', () => {
     it('unformat works', () => {

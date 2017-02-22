@@ -93,7 +93,7 @@ export function buildFormatter(rules: ILocaleRules, format: string): (val: numbe
 }
 
 export function buildUnformat(rules: ILocaleRules): (val: string) => number {
-    const tdMatcher = new RegExp(rules.td, "g");
+    const tdMatcher = new RegExp("\\"+rules.td, "g");
     const dd = rules.dd;
     return (val: string) => {
         var coef = 1;
