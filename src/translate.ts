@@ -13,7 +13,6 @@ declare var b: {
 export interface IG11NConfig {
     defaultLocale?: string;
     pathToTranslation?: (locale: string) => string | undefined;
-    isTranslationPreviewEnabled?: boolean;
 }
 
 let spyTranslationFunc: ((text: string) => string) | undefined;
