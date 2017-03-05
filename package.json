@@ -1,6 +1,6 @@
 {
   "name": "bobril-g11n",
-  "version": "3.3.0",
+  "version": "3.3.1",
   "description": "Bobril globalization",
   "main": "index.js",
   "types": "index.d.ts",

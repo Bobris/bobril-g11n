@@ -1,6 +1,11 @@
 CHANGELOG
 ===
 
+3.3.1
+--
+
+Remove nonsense JSX from tsconfig.json
+
 3.3.0
 --
 
