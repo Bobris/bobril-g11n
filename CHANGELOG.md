@@ -1,6 +1,11 @@
 CHANGELOG
 ===
 
+3.3.2
+--
+
+Remove empty files from tsconfig.json
+
 3.3.1
 --
 

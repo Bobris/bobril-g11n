@@ -30,6 +30,5 @@
         "./typings/moment/moment-node.d.ts",
         "./typings/numeral/numeral.d.ts",
         "./typings/jasmine/jasmine.d.ts"
-    ],
-    "files": []
+    ]
 }
