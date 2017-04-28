@@ -1,4 +1,5 @@
 "use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 var msgFormatParser = require("../src/msgFormatParser");
 describe('Parser', function () {
     function check(msg, result) {

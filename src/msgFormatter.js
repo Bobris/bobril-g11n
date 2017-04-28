@@ -1,4 +1,5 @@
 "use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 var RuntimeFunctionGenerator_1 = require("./RuntimeFunctionGenerator");
 var localeDataStorage = require("./localeDataStorage");
 var numberFormatter = require("./numberFormatter");

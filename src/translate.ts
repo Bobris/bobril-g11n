@@ -134,7 +134,7 @@ export function setLocale(locale: string): Promise<void> {
                 prom = prom.then(() => jsonp(p!)).catch((e) => {
                     console.warn(e);
                     if (locale != cfg.defaultLocale)
-                        return setLocale(cfg.defaultLocale!).then(() => Promise.reject(e));
+                        return setLocale(cfg.defaultLocale!).then(() => Promise.reject(e) as Promise<void>);
                     return undefined;
                 });
             }

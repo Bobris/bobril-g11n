@@ -1,4 +1,5 @@
 "use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 var defs = Object.create(null);
 defs['en'] = {
     pluralFn: function (n, ord) {

@@ -1,4 +1,5 @@
 "use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 require("bobril"); // For Promise polyfill and b in window
 var translate = require("../src/translate");
 var numberFormatter = require("../src/numberFormatter");

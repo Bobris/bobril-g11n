@@ -1,4 +1,5 @@
 "use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 function jsonp(url) {
     return new Promise(function (r, e) {
         var script = document.createElement('script');

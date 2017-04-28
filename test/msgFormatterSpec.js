@@ -1,4 +1,5 @@
 "use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 if (!Object.assign) {
     Object.assign = function assign(target) {
         var _sources = [];

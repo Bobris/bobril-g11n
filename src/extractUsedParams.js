@@ -1,4 +1,5 @@
 "use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 function extractUsedParams(msgAst) {
     var params = Object.create(null);
     extractUsedParamsRec(params, msgAst);

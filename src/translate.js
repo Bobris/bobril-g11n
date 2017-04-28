@@ -1,4 +1,5 @@
 "use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 /// <reference path="../typings/moment/moment-node.d.ts" />
 var msgFormatParser = require("./msgFormatParser");
 var msgFormatter = require("./msgFormatter");
