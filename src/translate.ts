@@ -1,4 +1,4 @@
-/// <reference path="../typings/moment/moment-node.d.ts" />
+import * as moment from 'moment';
 import * as msgFormatParser from './msgFormatParser';
 import * as msgFormatter from './msgFormatter';
 import { jsonp } from './jsonp';
