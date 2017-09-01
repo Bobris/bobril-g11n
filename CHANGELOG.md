@@ -1,6 +1,11 @@
 CHANGELOG
 ===
 
+3.3.3
+--
+
+Simplified typings and Moment import.
+
 3.3.2
 --
 

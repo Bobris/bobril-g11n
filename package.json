@@ -13,6 +13,18 @@
   "devDependencies": {
     "bobril": "*"
   },
+  "bobril": {
+    "compilerOptions": {
+      "declaration": true,
+      "noImplicitAny": true,
+      "noImplicitThis": true,
+      "noUnusedLocals": true,
+      "noUnusedParameters": true,
+      "noImplicitReturns": true,
+      "noFallthroughCasesInSwitch": true,
+      "strictNullChecks": true
+    }
+  },
   "scripts": {
     "test": "bb test"
   },

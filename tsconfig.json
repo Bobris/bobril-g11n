@@ -3,13 +3,7 @@
         "target": "es5",
         "module": "commonjs",
         "moduleResolution": "node",
-        "declaration": false,
-        "noImplicitAny": true,
-        "noImplicitThis": true,
-        "noUnusedLocals": true,
-        "noUnusedParameters": true,
-        "noImplicitReturns": true,
-        "noFallthroughCasesInSwitch": true,
+        "declaration": true,
         "lib": [
             "es5",
             "dom",
@@ -19,16 +13,20 @@
         "removeComments": false,
         "noLib": false,
         "preserveConstEnums": false,
-        "strictNullChecks": true,
-        "experimentalDecorators": true
+        "experimentalDecorators": true,
+        "noImplicitAny": true,
+        "noImplicitThis": true,
+        "noUnusedLocals": true,
+        "noUnusedParameters": true,
+        "noImplicitReturns": true,
+        "noFallthroughCasesInSwitch": true,
+        "strictNullChecks": true
     },
-    "compileOnSave": false,
     "include": [
-        "./index.ts",
-        "./src/*.ts",
-        "./test/*.ts",
-        "./typings/moment/moment-node.d.ts",
-        "./typings/numeral/numeral.d.ts",
-        "./typings/jasmine/jasmine.d.ts"
+        "**/*"
+    ],
+    "compileOnSave": false,
+    "files": [
+        "c:/Research/bobril-build/typings/jasmine/jasmine.d.ts"
     ]
 }

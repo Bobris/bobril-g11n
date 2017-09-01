@@ -1,9 +1,8 @@
+import * as moment from 'moment';
 import { RuntimeFunctionGenerator } from './RuntimeFunctionGenerator';
 import * as localeDataStorage from './localeDataStorage';
 import * as numberFormatter from './numberFormatter';
 
-declare var require: any;
-var moment = require('moment');
 (<any>window).moment = moment;
 
 var numberFormatterCache: { [locale_format: string]: (val: number) => string } = Object.create(null);
