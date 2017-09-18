@@ -31,7 +31,7 @@ let cfg: IG11NConfig = {
 };
 
 let loadedLocales: { [name: string]: boolean } = newMap();
-let registeredTranslations: { [name: string]: string[] } = newMap();
+export let registeredTranslations: { [name: string]: string[] } = newMap();
 let initWasStarted = false;
 let currentLocale = '';
 let currentRules: localeDataStorage.ILocaleRules = localeDataStorage.getRules("en");
