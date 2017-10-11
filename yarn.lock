@@ -3,9 +3,9 @@
 
 
 bobril@*:
-  version "7.6.1"
-  resolved "https://registry.yarnpkg.com/bobril/-/bobril-7.6.1.tgz#635add7376e2d5b074867f5a641633a33c2976b7"
+  version "7.6.4"
+  resolved "https://registry.yarnpkg.com/bobril/-/bobril-7.6.4.tgz#94d1064d2765ab3eeb1838f16a518401e2ed8de6"
 
 moment@^2.10.6:
-  version "2.18.1"
-  resolved "https://registry.yarnpkg.com/moment/-/moment-2.18.1.tgz#c36193dd3ce1c2eed2adb7c802dbbc77a81b1c0f"
+  version "2.19.1"
+  resolved "https://registry.yarnpkg.com/moment/-/moment-2.19.1.tgz#56da1a2d1cbf01d38b7e1afc31c10bcfa1929167"

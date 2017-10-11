@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-var RuntimeFunctionGenerator = (function () {
+var RuntimeFunctionGenerator = /** @class */ (function () {
     function RuntimeFunctionGenerator() {
         this.constants = [];
         this.body = '';

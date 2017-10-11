@@ -1,6 +1,11 @@
 CHANGELOG
 ===
 
+4.0.0
+--
+
+Global moment has set current locale. So you are free to use it, but even better is just use getMoment.
+
 3.3.4
 --
 

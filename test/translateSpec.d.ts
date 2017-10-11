@@ -1,1 +1,1 @@
-import "bobril";
+import 'bobril';

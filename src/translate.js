@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-/// <reference path="../typings/moment/moment-node.d.ts" />
+var moment = require("moment");
 var msgFormatParser = require("./msgFormatParser");
 var msgFormatter = require("./msgFormatter");
 var jsonp_1 = require("./jsonp");
@@ -15,7 +15,7 @@ var cfg = {
     pathToTranslation: function () { return undefined; }
 };
 var loadedLocales = newMap();
-var registeredTranslations = newMap();
+exports.registeredTranslations = newMap();
 var initWasStarted = false;
 var currentLocale = '';
 var currentRules = localeDataStorage.getRules("en");
@@ -23,7 +23,6 @@ var currentUnformatter;
 var currentTranslations = [];
 var currentCachedFormat = [];
 var stringCachedFormats = newMap();
-var momentInstance;
 if (window.g11nPath) {
     cfg.pathToTranslation = window.g11nPath;
 }
@@ -122,12 +121,12 @@ function setLocale(locale) {
     prom = prom.then(function () {
         currentLocale = locale;
         currentRules = localeDataStorage.getRules(locale);
-        currentTranslations = registeredTranslations[locale] || [];
+        currentTranslations = exports.registeredTranslations[locale] || [];
         currentUnformatter = undefined;
         currentCachedFormat = [];
         currentCachedFormat.length = currentTranslations.length;
         stringCachedFormats = newMap();
-        momentInstance = window.moment().locale(currentLocale);
+        moment.locale(currentLocale);
         b.ignoreShouldChange();
     });
     return prom;
@@ -137,13 +136,7 @@ function getLocale() {
     return currentLocale;
 }
 exports.getLocale = getLocale;
-function getMoment(init, init2, init3) {
-    if (init !== undefined) {
-        return window.moment(init, init2, init3).locale(currentLocale);
-    }
-    return momentInstance.clone();
-}
-exports.getMoment = getMoment;
+exports.getMoment = moment;
 function unformatNumber(str) {
     if (currentUnformatter === undefined) {
         currentUnformatter = numberFormatter.buildUnformat(currentRules);
@@ -156,7 +149,7 @@ function registerTranslations(locale, localeDefs, msgs) {
         localeDataStorage.setRules(locale, localeDefs);
     }
     if (Array.isArray(msgs))
-        registeredTranslations[locale] = msgs;
+        exports.registeredTranslations[locale] = msgs;
     loadedLocales[locale] = true;
 }
 exports.registerTranslations = registerTranslations;

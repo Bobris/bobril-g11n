@@ -1,9 +1,9 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+var moment = require("moment");
 var RuntimeFunctionGenerator_1 = require("./RuntimeFunctionGenerator");
 var localeDataStorage = require("./localeDataStorage");
 var numberFormatter = require("./numberFormatter");
-var moment = require('moment');
 window.moment = moment;
 var numberFormatterCache = Object.create(null);
 function getFormatter(locale, format) {

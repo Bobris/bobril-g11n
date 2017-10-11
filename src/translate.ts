@@ -39,7 +39,6 @@ let currentUnformatter: ((val: string) => number) | undefined;
 let currentTranslations: string[] = [];
 let currentCachedFormat: IMessageFormat[] = [];
 let stringCachedFormats: { [input: string]: IMessageFormat } = newMap();
-let momentInstance: moment.Moment;
 
 if ((<any>window).g11nPath) {
     cfg.pathToTranslation = (<any>window).g11nPath;
@@ -148,7 +147,7 @@ export function setLocale(locale: string): Promise<void> {
         currentCachedFormat = [];
         currentCachedFormat.length = currentTranslations.length;
         stringCachedFormats = newMap();
-        momentInstance = (<any>window).moment().locale(currentLocale);
+        moment.locale(currentLocale);
         b.ignoreShouldChange();
     });
     return prom;
@@ -158,12 +157,7 @@ export function getLocale(): string {
     return currentLocale;
 }
 
-export function getMoment(init?: any, init2?: any, init3?: any): moment.Moment {
-    if (init !== undefined) {
-        return (<any>window).moment(init, init2, init3).locale(currentLocale);
-    }
-    return momentInstance.clone();
-}
+export const getMoment = moment;
 
 export function unformatNumber(str: string): number {
     if (currentUnformatter === undefined) {
