@@ -1,33 +1,33 @@
 {
-  "name": "bobril-g11n",
-  "version": "4.0.0",
-  "description": "Bobril globalization",
-  "main": "index.js",
-  "types": "index.d.ts",
-  "typescript": {
-    "main": "index.ts"
-  },
-  "dependencies": {
-    "moment": "^2.10.6"
-  },
-  "devDependencies": {
-    "bobril": "*"
-  },
-  "bobril": {
-    "compilerOptions": {
-      "declaration": true,
-      "noImplicitAny": true,
-      "noImplicitThis": true,
-      "noUnusedLocals": true,
-      "noUnusedParameters": true,
-      "noImplicitReturns": true,
-      "noFallthroughCasesInSwitch": true,
-      "strictNullChecks": true
-    }
-  },
-  "scripts": {
-    "test": "bb test"
-  },
-  "author": "Boris Letocha",
-  "license": "MIT"
+    "name": "bobril-g11n",
+    "version": "4.1.0",
+    "description": "Bobril globalization",
+    "main": "index.js",
+    "types": "index.d.ts",
+    "typescript": {
+        "main": "index.ts"
+    },
+    "dependencies": {
+        "moment": "^2.10.6"
+    },
+    "devDependencies": {
+        "bobril": "*"
+    },
+    "bobril": {
+        "compilerOptions": {
+            "declaration": true,
+            "noImplicitAny": true,
+            "noImplicitThis": true,
+            "noUnusedLocals": true,
+            "noUnusedParameters": true,
+            "noImplicitReturns": true,
+            "noFallthroughCasesInSwitch": true,
+            "strictNullChecks": true
+        }
+    },
+    "scripts": {
+        "test": "bb test"
+    },
+    "author": "Boris Letocha",
+    "license": "MIT"
 }

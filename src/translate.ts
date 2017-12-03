@@ -1,9 +1,9 @@
-import * as moment from 'moment';
-import * as msgFormatParser from './msgFormatParser';
-import * as msgFormatter from './msgFormatter';
-import { jsonp } from './jsonp';
-import * as localeDataStorage from './localeDataStorage';
-import * as numberFormatter from './numberFormatter';
+import * as moment from "moment";
+import * as msgFormatParser from "./msgFormatParser";
+import * as msgFormatter from "./msgFormatter";
+import { jsonp } from "./jsonp";
+import * as localeDataStorage from "./localeDataStorage";
+import * as numberFormatter from "./numberFormatter";
 
 declare var b: {
     setBeforeInit(callback: (cb: () => void) => void): void;
@@ -33,7 +33,7 @@ let cfg: IG11NConfig = {
 let loadedLocales: { [name: string]: boolean } = newMap();
 export let registeredTranslations: { [name: string]: string[] } = newMap();
 let initWasStarted = false;
-let currentLocale = '';
+let currentLocale = "";
 let currentRules: localeDataStorage.ILocaleRules = localeDataStorage.getRules("en");
 let currentUnformatter: ((val: string) => number) | undefined;
 let currentTranslations: string[] = [];
@@ -51,32 +51,33 @@ if ((<any>window).g11nLoc) {
 function currentTranslationMessage(message: number): string {
     let text = currentTranslations[message];
     if (text === undefined) {
-        throw new Error('message ' + message + ' is not defined');
+        throw new Error("message " + message + " is not defined");
     }
     return text;
 }
 
 function spyTranslatedString(translated: string) {
-    if (spyTranslationFunc === undefined)
-        return translated;
+    if (spyTranslationFunc === undefined) return translated;
 
     return spyTranslationFunc(translated);
 }
 
 export function t(message: string | number, params?: Object, _translationHelp?: string): string {
     if (currentLocale.length === 0) {
-        throw new Error('before using t you need to wait for initialization of g11n');
+        throw new Error("before using t you need to wait for initialization of g11n");
     }
     let format: IMessageFormat;
-    if (typeof message === 'number') {
+    if (typeof message === "number") {
         if (params == null) {
             return spyTranslatedString(currentTranslationMessage(message));
         }
         format = currentCachedFormat[message];
         if (format === undefined) {
             let ast = msgFormatParser.parse(currentTranslationMessage(message));
-            if (ast.type === 'error') {
-                throw new Error('message ' + message + ' in ' + currentLocale + ' has error: ' + ast.msg);
+            if (ast.type === "error") {
+                throw new Error(
+                    "message " + message + " in " + currentLocale + " has error: " + ast.msg
+                );
             }
             format = msgFormatter.compile(currentLocale, ast);
             currentCachedFormat[message] = format;
@@ -86,8 +87,10 @@ export function t(message: string | number, params?: Object, _translationHelp?: 
         format = stringCachedFormats[message];
         if (format === undefined) {
             let ast = msgFormatParser.parse(message);
-            if (ast.type === 'error') {
-                throw new Error('message "' + message + '" has error: ' + ast.msg + ' on position: ' + ast.pos);
+            if (ast.type === "error") {
+                throw new Error(
+                    'message "' + message + '" has error: ' + ast.msg + " on position: " + ast.pos
+                );
             }
             format = msgFormatter.compile(currentLocale, ast);
             stringCachedFormats[message] = format;
@@ -108,7 +111,7 @@ b.setBeforeInit((cb: (_: any) => void) => {
 
 export function initGlobalization(config?: IG11NConfig): Promise<void> {
     if (initWasStarted) {
-        throw new Error('initLocalization must be called only once');
+        throw new Error("initLocalization must be called only once");
     }
     Object.assign(cfg, config);
     initWasStarted = true;
@@ -123,17 +126,19 @@ export function initGlobalization(config?: IG11NConfig): Promise<void> {
 
 export function setLocale(locale: string): Promise<void> {
     let prom = Promise.resolve();
-    if (currentLocale === locale)
-        return prom;
-    if (!loadedLocales[locale]) {
+    if (currentLocale === locale) return prom;
+    var lcLocale = locale.toLowerCase();
+    if (!loadedLocales[lcLocale]) {
         let pathToTranslation = cfg.pathToTranslation;
         if (pathToTranslation) {
             let p = pathToTranslation(locale);
             if (p) {
-                prom = prom.then(() => jsonp(p!)).catch((e) => {
+                prom = prom.then(() => jsonp(p!)).catch(e => {
                     console.warn(e);
                     if (locale != cfg.defaultLocale)
-                        return setLocale(cfg.defaultLocale!).then(() => Promise.reject(e) as Promise<void>);
+                        return setLocale(cfg.defaultLocale!).then(
+                            () => Promise.reject(e) as Promise<void>
+                        );
                     return undefined;
                 });
             }
@@ -141,8 +146,8 @@ export function setLocale(locale: string): Promise<void> {
     }
     prom = prom.then(() => {
         currentLocale = locale;
-        currentRules = localeDataStorage.getRules(locale);
-        currentTranslations = registeredTranslations[locale] || [];
+        currentRules = localeDataStorage.getRules(lcLocale);
+        currentTranslations = registeredTranslations[lcLocale] || [];
         currentUnformatter = undefined;
         currentCachedFormat = [];
         currentCachedFormat.length = currentTranslations.length;
@@ -167,27 +172,27 @@ export function unformatNumber(str: string): number {
 }
 
 export function registerTranslations(locale: string, localeDefs: any[], msgs: string[]): void {
+    locale = locale.toLowerCase();
     if (Array.isArray(localeDefs)) {
         localeDataStorage.setRules(locale, localeDefs);
     }
-    if (Array.isArray(msgs))
-        registeredTranslations[locale] = msgs;
+    if (Array.isArray(msgs)) registeredTranslations[locale] = msgs;
     loadedLocales[locale] = true;
 }
 
-export function spyTranslation(spyFn?: ((text: string) => string) | null): ((text: string) => string) | undefined {
-    if (spyFn === undefined)
-        return spyTranslationFunc;
+export function spyTranslation(
+    spyFn?: ((text: string) => string) | null
+): ((text: string) => string) | undefined {
+    if (spyFn === undefined) return spyTranslationFunc;
     if (spyFn === null) {
         spyTranslationFunc = undefined;
-    }
-    else {
+    } else {
         spyTranslationFunc = spyFn;
     }
     return spyTranslationFunc;
 }
 
 if (window) {
-    (<any>window)['bobrilRegisterTranslations'] = registerTranslations;
-    (<any>window)['b'].spyTr = spyTranslation;
+    (<any>window)["bobrilRegisterTranslations"] = registerTranslations;
+    (<any>window)["b"].spyTr = spyTranslation;
 }

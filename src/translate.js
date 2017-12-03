@@ -17,7 +17,7 @@ var cfg = {
 var loadedLocales = newMap();
 exports.registeredTranslations = newMap();
 var initWasStarted = false;
-var currentLocale = '';
+var currentLocale = "";
 var currentRules = localeDataStorage.getRules("en");
 var currentUnformatter;
 var currentTranslations = [];
@@ -32,7 +32,7 @@ if (window.g11nLoc) {
 function currentTranslationMessage(message) {
     var text = currentTranslations[message];
     if (text === undefined) {
-        throw new Error('message ' + message + ' is not defined');
+        throw new Error("message " + message + " is not defined");
     }
     return text;
 }
@@ -43,18 +43,18 @@ function spyTranslatedString(translated) {
 }
 function t(message, params, _translationHelp) {
     if (currentLocale.length === 0) {
-        throw new Error('before using t you need to wait for initialization of g11n');
+        throw new Error("before using t you need to wait for initialization of g11n");
     }
     var format;
-    if (typeof message === 'number') {
+    if (typeof message === "number") {
         if (params == null) {
             return spyTranslatedString(currentTranslationMessage(message));
         }
         format = currentCachedFormat[message];
         if (format === undefined) {
             var ast = msgFormatParser.parse(currentTranslationMessage(message));
-            if (ast.type === 'error') {
-                throw new Error('message ' + message + ' in ' + currentLocale + ' has error: ' + ast.msg);
+            if (ast.type === "error") {
+                throw new Error("message " + message + " in " + currentLocale + " has error: " + ast.msg);
             }
             format = msgFormatter.compile(currentLocale, ast);
             currentCachedFormat[message] = format;
@@ -66,8 +66,8 @@ function t(message, params, _translationHelp) {
         format = stringCachedFormats[message];
         if (format === undefined) {
             var ast = msgFormatParser.parse(message);
-            if (ast.type === 'error') {
-                throw new Error('message "' + message + '" has error: ' + ast.msg + ' on position: ' + ast.pos);
+            if (ast.type === "error") {
+                throw new Error('message "' + message + '" has error: ' + ast.msg + " on position: " + ast.pos);
             }
             format = msgFormatter.compile(currentLocale, ast);
             stringCachedFormats[message] = format;
@@ -87,7 +87,7 @@ b.setBeforeInit(function (cb) {
 });
 function initGlobalization(config) {
     if (initWasStarted) {
-        throw new Error('initLocalization must be called only once');
+        throw new Error("initLocalization must be called only once");
     }
     Object.assign(cfg, config);
     initWasStarted = true;
@@ -104,7 +104,8 @@ function setLocale(locale) {
     var prom = Promise.resolve();
     if (currentLocale === locale)
         return prom;
-    if (!loadedLocales[locale]) {
+    var lcLocale = locale.toLowerCase();
+    if (!loadedLocales[lcLocale]) {
         var pathToTranslation = cfg.pathToTranslation;
         if (pathToTranslation) {
             var p_1 = pathToTranslation(locale);
@@ -120,8 +121,8 @@ function setLocale(locale) {
     }
     prom = prom.then(function () {
         currentLocale = locale;
-        currentRules = localeDataStorage.getRules(locale);
-        currentTranslations = exports.registeredTranslations[locale] || [];
+        currentRules = localeDataStorage.getRules(lcLocale);
+        currentTranslations = exports.registeredTranslations[lcLocale] || [];
         currentUnformatter = undefined;
         currentCachedFormat = [];
         currentCachedFormat.length = currentTranslations.length;
@@ -145,6 +146,7 @@ function unformatNumber(str) {
 }
 exports.unformatNumber = unformatNumber;
 function registerTranslations(locale, localeDefs, msgs) {
+    locale = locale.toLowerCase();
     if (Array.isArray(localeDefs)) {
         localeDataStorage.setRules(locale, localeDefs);
     }
@@ -166,6 +168,6 @@ function spyTranslation(spyFn) {
 }
 exports.spyTranslation = spyTranslation;
 if (window) {
-    window['bobrilRegisterTranslations'] = registerTranslations;
-    window['b'].spyTr = spyTranslation;
+    window["bobrilRegisterTranslations"] = registerTranslations;
+    window["b"].spyTr = spyTranslation;
 }
