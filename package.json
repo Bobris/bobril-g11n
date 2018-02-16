@@ -1,6 +1,6 @@
 {
     "name": "bobril-g11n",
-    "version": "4.1.0",
+    "version": "4.2.0",
     "description": "Bobril globalization",
     "main": "index.js",
     "types": "index.d.ts",
@@ -13,6 +13,10 @@
     "devDependencies": {
         "bobril": "*"
     },
+    "prettier": {
+        "tabWidth": 4,
+        "printWidth": 120
+    },
     "bobril": {
         "compilerOptions": {
             "declaration": true,
@@ -22,6 +26,7 @@
             "noUnusedParameters": true,
             "noImplicitReturns": true,
             "noFallthroughCasesInSwitch": true,
+            "strict": true,
             "strictNullChecks": true
         }
     },

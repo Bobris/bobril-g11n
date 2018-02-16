@@ -96,4 +96,12 @@ describe('Formatter', () => {
         check('{a, time, relative}', { a: Date.now() + 10000000 }, 'in 3 hours');
         check('{a, time, relative, noago}', { a: Date.now() + 100000 }, '2 minutes');
     });
+
+    it('relativepast', () => {
+        check('{a, time, relativepast}', { a: Date.now() - 1000 }, 'a few seconds ago');
+        check('{a, time, relativepast}', { a: Date.now() - 100000 }, '2 minutes ago');
+        check('{a, time, relativepast}', { a: Date.now() + 10000000 }, 'a few seconds ago');
+        check('{a, time, relativepast, noago}', { a: Date.now() + 100000 }, 'a few seconds');
+    });
+
 });

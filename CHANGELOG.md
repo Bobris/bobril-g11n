@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 4.2.0
+
+New feature relativepast how to format relative time. It is same as relative just it never display future time.
+
 ## 4.1.0
 
 Compare locale in case insensitive way.
