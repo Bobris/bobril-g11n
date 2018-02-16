@@ -75,9 +75,7 @@ export function t(message: string | number, params?: Object, _translationHelp?: 
         if (format === undefined) {
             let ast = msgFormatParser.parse(currentTranslationMessage(message));
             if (ast.type === "error") {
-                throw new Error(
-                    "message " + message + " in " + currentLocale + " has error: " + ast.msg
-                );
+                throw new Error("message " + message + " in " + currentLocale + " has error: " + ast.msg);
             }
             format = msgFormatter.compile(currentLocale, ast);
             currentCachedFormat[message] = format;
@@ -88,9 +86,7 @@ export function t(message: string | number, params?: Object, _translationHelp?: 
         if (format === undefined) {
             let ast = msgFormatParser.parse(message);
             if (ast.type === "error") {
-                throw new Error(
-                    'message "' + message + '" has error: ' + ast.msg + " on position: " + ast.pos
-                );
+                throw new Error('message "' + message + '" has error: ' + ast.msg + " on position: " + ast.pos);
             }
             format = msgFormatter.compile(currentLocale, ast);
             stringCachedFormats[message] = format;
@@ -136,9 +132,7 @@ export function setLocale(locale: string): Promise<void> {
                 prom = prom.then(() => jsonp(p!)).catch(e => {
                     console.warn(e);
                     if (locale != cfg.defaultLocale)
-                        return setLocale(cfg.defaultLocale!).then(
-                            () => Promise.reject(e) as Promise<void>
-                        );
+                        return setLocale(cfg.defaultLocale!).then(() => Promise.reject(e) as Promise<void>);
                     return undefined;
                 });
             }
@@ -180,9 +174,7 @@ export function registerTranslations(locale: string, localeDefs: any[], msgs: st
     loadedLocales[locale] = true;
 }
 
-export function spyTranslation(
-    spyFn?: ((text: string) => string) | null
-): ((text: string) => string) | undefined {
+export function spyTranslation(spyFn?: ((text: string) => string) | null): ((text: string) => string) | undefined {
     if (spyFn === undefined) return spyTranslationFunc;
     if (spyFn === null) {
         spyTranslationFunc = undefined;

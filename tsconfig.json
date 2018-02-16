@@ -23,7 +23,8 @@
         "noImplicitReturns": true,
         "noFallthroughCasesInSwitch": true,
         "strictNullChecks": true,
-        "types": []
+        "types": [],
+        "strict": true
     },
     "include": [
         "**/*"

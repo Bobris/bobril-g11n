@@ -115,7 +115,7 @@ function AnyFormatter(
     throw new Error("bad type in AnyFormatter");
 }
 
-export function compile(locale: string, msgAst: any): (params: Object, hashArg?: string) => string {
+export function compile(locale: string, msgAst: any): (params?: Object, hashArg?: string) => string {
     if (typeof msgAst === "string") {
         return () => msgAst;
     }
@@ -135,11 +135,11 @@ export function compile(locale: string, msgAst: any): (params: Object, hashArg?:
             }
         }
         comp.addBody(";");
-        return <(params: Object, hashArg?: string) => string>comp.build();
+        return <(params?: Object, hashArg?: string) => string>comp.build();
     }
     switch (msgAst.type) {
         case "arg":
-            return ((name: string) => (params: Object) => (<any>params)[name])(msgAst.id);
+            return ((name: string) => (params?: Object) => (<any>params)[name])(msgAst.id);
         case "hash":
             return (_params, hashArg) => {
                 if (hashArg === undefined) return "#";
@@ -253,7 +253,7 @@ export function compile(locale: string, msgAst: any): (params: Object, hashArg?:
                     }
                 }
             }
-            return <(params: Object, hashArg?: string) => string>comp.build();
+            return <(params?: Object, hashArg?: string) => string>comp.build();
     }
     throw new Error("invalid AST in compile");
 }
