@@ -13,7 +13,11 @@ declare var b: {
 export interface IG11NConfig {
     defaultLocale?: string;
     pathToTranslation?: (locale: string) => string | undefined;
+    runScriptAsync?: (url: string) => Promise<void>;
 }
+
+export type DelayedMessage = [number, Object?];
+export type SerializableDelayedMessage = [string, Object?];
 
 let spyTranslationFunc: ((text: string) => string) | undefined;
 
@@ -27,7 +31,8 @@ function newMap(): any {
 
 let cfg: IG11NConfig = {
     defaultLocale: "en-US",
-    pathToTranslation: () => undefined
+    pathToTranslation: () => undefined,
+    runScriptAsync: jsonp
 };
 
 let loadedLocales: { [name: string]: boolean } = newMap();
@@ -39,6 +44,8 @@ let currentUnformatter: ((val: string) => number) | undefined;
 let currentTranslations: string[] = [];
 let currentCachedFormat: IMessageFormat[] = [];
 let stringCachedFormats: { [input: string]: IMessageFormat } = newMap();
+let keysByTranslationId: string[] | undefined = undefined;
+let key2TranslationId: Map<string, number> | undefined = undefined;
 
 if ((<any>window).g11nPath) {
     cfg.pathToTranslation = (<any>window).g11nPath;
@@ -95,15 +102,55 @@ export function t(message: string | number, params?: Object, _translationHelp?: 
     return spyTranslatedString(format(params));
 }
 
+export function dt(message: string | number, params?: Object, _translationHelp?: string): DelayedMessage {
+    if (params == undefined) return [message as number];
+    return [message as number, params];
+}
+
+let lazyLoadKeys: Promise<void> | undefined = undefined;
+
+export function loadSerializationKeys(): Promise<void> {
+    if (lazyLoadKeys === undefined) {
+        lazyLoadKeys = cfg.runScriptAsync!("l10nkeys").then(invokeInvalidate);
+    }
+    return lazyLoadKeys;
+}
+
+export function serializationKeysLoaded(): boolean {
+    return keysByTranslationId != undefined;
+}
+
+export function serializeMessage(message: DelayedMessage): SerializableDelayedMessage {
+    if (keysByTranslationId === undefined) throw new Error("Make sure to await loadSerializationKeys");
+    let key = keysByTranslationId[message[0]];
+    if (message.length == 1) return [key];
+    return [key, message[1]];
+}
+
+export function formatDelayedMessage(message: DelayedMessage): string {
+    return t(message[0], message[1]);
+}
+
+export function formatSerializedMessage(message: SerializableDelayedMessage): string {
+    if (!serializationKeysLoaded()) {
+        loadSerializationKeys();
+        return "";
+    }
+    let id = key2TranslationId!.get(message[0])!;
+    return t(id, message[1]);
+}
+
 export function f(message: string, params: Object): string {
     return t(message, params);
 }
 
 let initPromise = Promise.resolve<any>(null);
 initPromise = initPromise.then(() => setLocale(cfg.defaultLocale!));
-b.setBeforeInit((cb: (_: any) => void) => {
-    initPromise.then(cb, cb);
-});
+if (b != null && b.setBeforeInit != null) {
+    b.setBeforeInit((cb: (_: any) => void) => {
+        initPromise.then(cb, cb);
+    });
+}
 
 export function initGlobalization(config?: IG11NConfig): Promise<void> {
     if (initWasStarted) {
@@ -129,7 +176,7 @@ export function setLocale(locale: string): Promise<void> {
         if (pathToTranslation) {
             let p = pathToTranslation(locale);
             if (p) {
-                prom = prom.then(() => jsonp(p!)).catch(e => {
+                prom = prom.then(() => cfg.runScriptAsync!(p!)).catch(e => {
                     console.warn(e);
                     if (locale != cfg.defaultLocale)
                         return setLocale(cfg.defaultLocale!).then(() => Promise.reject(e) as Promise<void>);
@@ -147,9 +194,13 @@ export function setLocale(locale: string): Promise<void> {
         currentCachedFormat.length = currentTranslations.length;
         stringCachedFormats = newMap();
         moment.locale(currentLocale);
-        b.ignoreShouldChange();
+        invokeInvalidate();
     });
     return prom;
+}
+
+function invokeInvalidate() {
+    if (b != null && b.ignoreShouldChange != null) b.ignoreShouldChange();
 }
 
 export function getLocale(): string {
@@ -166,6 +217,14 @@ export function unformatNumber(str: string): number {
 }
 
 export function registerTranslations(locale: string, localeDefs: any[], msgs: string[]): void {
+    if (locale == "") {
+        keysByTranslationId = msgs;
+        key2TranslationId = new Map<string, number>();
+        for (let i = 0; i < msgs.length; i++) {
+            key2TranslationId.set(msgs[i], i);
+        }
+        return;
+    }
     locale = locale.toLowerCase();
     if (Array.isArray(localeDefs)) {
         localeDataStorage.setRules(locale, localeDefs);
@@ -186,5 +245,5 @@ export function spyTranslation(spyFn?: ((text: string) => string) | null): ((tex
 
 if (window) {
     (<any>window)["bobrilRegisterTranslations"] = registerTranslations;
-    (<any>window)["b"].spyTr = spyTranslation;
+    if ((<any>window)["b"] != null) (<any>window)["b"].spyTr = spyTranslation;
 }

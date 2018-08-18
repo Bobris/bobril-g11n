@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 4.3.0
+
+New feature of DelayedMessages and SerializedMessages. Allows transfering messages between different applications. Allows to run without Bobril and customize running scripts from url to be able to run on without browser.
+
 ## 4.2.0
 
 New feature relativepast how to format relative time. It is same as relative just it never display future time.
