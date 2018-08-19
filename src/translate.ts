@@ -16,7 +16,7 @@ export interface IG11NConfig {
     runScriptAsync?: (url: string) => Promise<void>;
 }
 
-export type DelayedMessage = [number, Object?];
+export type DelayedMessage = [number | string, Object?];
 export type SerializableDelayedMessage = [string, Object?];
 
 let spyTranslationFunc: ((text: string) => string) | undefined;
@@ -121,8 +121,15 @@ export function serializationKeysLoaded(): boolean {
 }
 
 export function serializeMessage(message: DelayedMessage): SerializableDelayedMessage {
+    let m = message[0];
+    if (typeof m == "string") {
+        if (message.length === 1) {
+            return [m + "\t0"];
+        }
+        return [m + "\t1", message[1]];
+    }
     if (keysByTranslationId === undefined) throw new Error("Make sure to await loadSerializationKeys");
-    let key = keysByTranslationId[message[0]];
+    let key = keysByTranslationId[m];
     if (message.length == 1) return [key];
     return [key, message[1]];
 }
@@ -131,13 +138,25 @@ export function formatDelayedMessage(message: DelayedMessage): string {
     return t(message[0], message[1]);
 }
 
-export function formatSerializedMessage(message: SerializableDelayedMessage): string {
+export function deserializeMessage(message: SerializableDelayedMessage): DelayedMessage {
+    let id: string | number | undefined = undefined;
     if (!serializationKeysLoaded()) {
         loadSerializationKeys();
-        return "";
+    } else {
+        id = key2TranslationId!.get(message[0]);
     }
-    let id = key2TranslationId!.get(message[0])!;
-    return t(id, message[1]);
+    if (id === undefined) {
+        id = message[0];
+        id = id.substr(0, id.lastIndexOf("\t"));
+    }
+    if (message.length === 1) {
+        return [id];
+    }
+    return [id, message[1]];
+}
+
+export function formatSerializedMessage(message: SerializableDelayedMessage): string {
+    return formatDelayedMessage(deserializeMessage(message));
 }
 
 export function f(message: string, params: Object): string {
