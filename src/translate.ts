@@ -111,7 +111,7 @@ let lazyLoadKeys: Promise<void> | undefined = undefined;
 
 export function loadSerializationKeys(): Promise<void> {
     if (lazyLoadKeys === undefined) {
-        lazyLoadKeys = cfg.runScriptAsync!("l10nkeys").then(invokeInvalidate);
+        lazyLoadKeys = cfg.runScriptAsync!(cfg.pathToTranslation!("l10nkeys")!).then(invokeInvalidate);
     }
     return lazyLoadKeys;
 }
