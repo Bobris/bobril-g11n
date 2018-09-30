@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 4.3.1
+
+Made compatible with TypeScript 3.1.1
+
 ## 4.3.0
 
 New feature of DelayedMessages and SerializedMessages. Allows transfering messages between different applications. Allows to run without Bobril and customize running scripts from url to be able to run on without browser.

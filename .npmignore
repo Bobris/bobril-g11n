@@ -1,5 +1,6 @@
 test/
 testbundle/
-gulpfile.js
-karma.conf.js
-tscomp.js
+*.d.ts
+*.js
+index.js
+*.pegjs

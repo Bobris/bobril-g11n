@@ -10,6 +10,6 @@ export function jsonp(url: string): Promise<any> {
             e('Failed to load ' + url);
         };
         script.src = url;
-        document.head.appendChild(script);
+        document.head!.appendChild(script);
     });
 }
