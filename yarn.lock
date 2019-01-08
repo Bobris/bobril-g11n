@@ -3,13 +3,13 @@
 
 
 bobril@*:
-  version "8.15.1"
-  resolved "https://registry.yarnpkg.com/bobril/-/bobril-8.15.1.tgz#8a786b84a268938dea955856ab2c07249b71d59e"
+  version "8.16.0"
+  resolved "https://registry.yarnpkg.com/bobril/-/bobril-8.16.0.tgz#1196656df3defb52e84fe3f59ef223c078b597f0"
 
 moment@^2.10.6:
   version "2.22.2"
   resolved "https://registry.yarnpkg.com/moment/-/moment-2.22.2.tgz#3c257f9839fc0e93ff53149632239eb90783ff66"
 
 typescript@*:
-  version "3.1.1"
-  resolved "https://registry.yarnpkg.com/typescript/-/typescript-3.1.1.tgz#3362ba9dd1e482ebb2355b02dfe8bcd19a2c7c96"
+  version "3.1.6"
+  resolved "https://registry.yarnpkg.com/typescript/-/typescript-3.1.6.tgz#b6543a83cfc8c2befb3f4c8fba6896f5b0c9be68"

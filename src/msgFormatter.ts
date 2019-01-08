@@ -2,6 +2,7 @@ import * as moment from "moment";
 import { RuntimeFunctionGenerator } from "./RuntimeFunctionGenerator";
 import * as localeDataStorage from "./localeDataStorage";
 import * as numberFormatter from "./numberFormatter";
+import { f } from "./translate";
 
 (<any>window).moment = moment;
 
@@ -139,7 +140,7 @@ export function compile(locale: string, msgAst: any): (params?: Object, hashArg?
     }
     switch (msgAst.type) {
         case "arg":
-            return ((name: string) => (params?: Object) => (<any>params)[name])(msgAst.id);
+            return ((name: string) => (params?: Object) => f((<any>params)[name]))(msgAst.id);
         case "hash":
             return (_params, hashArg) => {
                 if (hashArg === undefined) return "#";

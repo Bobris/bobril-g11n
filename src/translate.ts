@@ -69,11 +69,19 @@ function spyTranslatedString(translated: string) {
     return spyTranslationFunc(translated);
 }
 
-export function t(message: string | number, params?: Object, _translationHelp?: string): string {
+export function t(message: string | number | DelayedMessage | SerializableDelayedMessage, params?: Object, _translationHelp?: string): string {
     if (currentLocale.length === 0) {
         throw new Error("before using t you need to wait for initialization of g11n");
     }
     let format: IMessageFormat;
+    if (Array.isArray(message))
+    {
+        if (typeof message[0] === "string")
+        {
+            return formatSerializedMessage(message as SerializableDelayedMessage);
+        }
+        return formatDelayedMessage(message);
+    }
     if (typeof message === "number") {
         if (params == null) {
             return spyTranslatedString(currentTranslationMessage(message));
@@ -159,7 +167,12 @@ export function formatSerializedMessage(message: SerializableDelayedMessage): st
     return formatDelayedMessage(deserializeMessage(message));
 }
 
-export function f(message: string, params: Object): string {
+export function f(message: DelayedMessage | SerializableDelayedMessage): string;
+export function f(message: string, params: Object): string;
+export function f(message: string): string;
+export function f(message: string | DelayedMessage | SerializableDelayedMessage, params?: Object): string {
+    if (typeof message === "string" && params === undefined)
+        return message;
     return t(message, params);
 }
 
