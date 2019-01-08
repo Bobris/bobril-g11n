@@ -69,15 +69,17 @@ function spyTranslatedString(translated: string) {
     return spyTranslationFunc(translated);
 }
 
-export function t(message: string | number | DelayedMessage | SerializableDelayedMessage, params?: Object, _translationHelp?: string): string {
+export function t(
+    message: string | number | DelayedMessage | SerializableDelayedMessage,
+    params?: Object,
+    _translationHelp?: string
+): string {
     if (currentLocale.length === 0) {
         throw new Error("before using t you need to wait for initialization of g11n");
     }
     let format: IMessageFormat;
-    if (Array.isArray(message))
-    {
-        if (typeof message[0] === "string")
-        {
+    if (Array.isArray(message)) {
+        if (typeof message[0] === "string") {
             return formatSerializedMessage(message as SerializableDelayedMessage);
         }
         return formatDelayedMessage(message);
@@ -128,18 +130,48 @@ export function serializationKeysLoaded(): boolean {
     return keysByTranslationId != undefined;
 }
 
+const HOP = {}.hasOwnProperty;
+
+function serializeParams(params: Object | undefined): Object | undefined {
+    if (params == undefined) return params;
+    let needSerialization = false;
+    for (const key in params) {
+        if (HOP.call(params, key)) {
+            const element = (params as any)[key];
+            if (Array.isArray(element)) {
+                needSerialization = true;
+                break;
+            }
+        }
+    }
+    if (!needSerialization) return params;
+    let res = {} as any;
+    for (const key in params) {
+        if (HOP.call(params, key)) {
+            let element = (params as any)[key];
+            if (Array.isArray(element)) {
+                element = serializeMessage(element as DelayedMessage);
+            }
+            res[key] = element;
+        }
+    }
+    return res;
+}
+
 export function serializeMessage(message: DelayedMessage): SerializableDelayedMessage {
+    if (keysByTranslationId === undefined) throw new Error("Make sure to await loadSerializationKeys");
     let m = message[0];
     if (typeof m == "string") {
         if (message.length === 1) {
+            if (key2TranslationId!.has(m) || m.endsWith("\t0")) return message as SerializableDelayedMessage;
             return [m + "\t0"];
         }
-        return [m + "\t1", message[1]];
+        if (key2TranslationId!.has(m) || m.endsWith("\t1")) return message as SerializableDelayedMessage;
+        return [m + "\t1", serializeParams(message[1])];
     }
-    if (keysByTranslationId === undefined) throw new Error("Make sure to await loadSerializationKeys");
     let key = keysByTranslationId[m];
     if (message.length == 1) return [key];
-    return [key, message[1]];
+    return [key, serializeParams(message[1])];
 }
 
 export function formatDelayedMessage(message: DelayedMessage): string {
@@ -171,8 +203,7 @@ export function f(message: DelayedMessage | SerializableDelayedMessage): string;
 export function f(message: string, params: Object): string;
 export function f(message: string): string;
 export function f(message: string | DelayedMessage | SerializableDelayedMessage, params?: Object): string {
-    if (typeof message === "string" && params === undefined)
-        return message;
+    if (typeof message === "string" && params === undefined) return message;
     return t(message, params);
 }
 
@@ -208,12 +239,14 @@ export function setLocale(locale: string): Promise<void> {
         if (pathToTranslation) {
             let p = pathToTranslation(locale);
             if (p) {
-                prom = prom.then(() => cfg.runScriptAsync!(p!)).catch(e => {
-                    console.warn(e);
-                    if (locale != cfg.defaultLocale)
-                        return setLocale(cfg.defaultLocale!).then(() => Promise.reject(e) as Promise<void>);
-                    return undefined;
-                });
+                prom = prom
+                    .then(() => cfg.runScriptAsync!(p!))
+                    .catch(e => {
+                        console.warn(e);
+                        if (locale != cfg.defaultLocale)
+                            return setLocale(cfg.defaultLocale!).then(() => Promise.reject(e) as Promise<void>);
+                        return undefined;
+                    });
             }
         }
     }

@@ -1,12 +1,27 @@
 # CHANGELOG
 
+## 4.4.0
+
+DelayedMessages and SerializedMessages are now more useful. They are automatically expanded in any message parameters during formatting. Function `f` was expanded to support formatting of DelayedMessages and SerializedMessages. `serializeMessage` now does recursive serialization including parameters.
+
+```js
+console.log(f(dt("Blabla {aparam}", { aparam: dt("hello") })));
+
+let sendToServer = serializeMessage(dt(""));
+console.log(f(receivedFromServerFromDifferentVersion));
+```
+
+`formatSerializedMessage` and `formatDelayedMessage` are obsolete and should be replaced by `f`.
+
+Note: Needs to be used with Bobril 8.16.0 which polyfills `String.endsWith`
+
 ## 4.3.1
 
 Made compatible with TypeScript 3.1.1
 
 ## 4.3.0
 
-New feature of DelayedMessages and SerializedMessages. Allows transfering messages between different applications. Allows to run without Bobril and customize running scripts from url to be able to run on without browser.
+New feature of DelayedMessages and SerializedMessages. Allows transferring messages between different applications. Allows to run without Bobril and customize running scripts from url to be able to run on without browser.
 
 ## 4.2.0
 
