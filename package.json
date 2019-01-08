@@ -3,7 +3,6 @@
     "version": "4.4.0",
     "description": "Bobril globalization",
     "main": "index.js",
-    "types": "index.d.ts",
     "typescript": {
         "main": "index.ts"
     },
