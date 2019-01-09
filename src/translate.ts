@@ -203,7 +203,7 @@ export function f(message: DelayedMessage | SerializableDelayedMessage): string;
 export function f(message: string, params: Object): string;
 export function f(message: string): string;
 export function f(message: string | DelayedMessage | SerializableDelayedMessage, params?: Object): string {
-    if (typeof message === "string" && params === undefined) return message;
+    if (typeof message !== "object" && params === undefined) return message;
     return t(message, params);
 }
 

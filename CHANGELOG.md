@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 4.4.1
+
+Fix regression with number/boolean parameters.
+
 ## 4.4.0
 
 DelayedMessages and SerializedMessages are now more useful. They are automatically expanded in any message parameters during formatting. Function `f` was expanded to support formatting of DelayedMessages and SerializedMessages. `serializeMessage` now does recursive serialization including parameters.
