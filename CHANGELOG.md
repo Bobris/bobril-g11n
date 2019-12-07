@@ -1,5 +1,19 @@
 # CHANGELOG
 
+## 5.0.0
+
+Needs TypeScript 3.7+, directly depends on Bobril. Support formatting of elements of virtual dom.
+
+```tsx
+f("Hello {1}{world}{/1}", { 1: (p: b.IBobrilChildren) => <b>{p}</b>, world: "World" });
+f("Simple {1/}", { 1: () => <App /> });
+
+// Next thing also needs support in bobril-build
+<T hint="translation hint" param1={42}>
+    Answer is <strong>{t("{param1}")}</strong>!
+</T>;
+```
+
 ## 4.4.1
 
 Fix regression with number/boolean parameters.

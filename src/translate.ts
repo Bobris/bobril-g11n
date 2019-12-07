@@ -1,14 +1,10 @@
+import * as b from "bobril";
 import * as moment from "moment";
 import * as msgFormatParser from "./msgFormatParser";
 import * as msgFormatter from "./msgFormatter";
 import { jsonp } from "./jsonp";
 import * as localeDataStorage from "./localeDataStorage";
 import * as numberFormatter from "./numberFormatter";
-
-declare var b: {
-    setBeforeInit(callback: (cb: () => void) => void): void;
-    ignoreShouldChange(): void;
-};
 
 export interface IG11NConfig {
     defaultLocale?: string;
@@ -91,7 +87,7 @@ export function t(
         format = currentCachedFormat[message];
         if (format === undefined) {
             let ast = msgFormatParser.parse(currentTranslationMessage(message));
-            if (ast.type === "error") {
+            if (msgFormatParser.isParserError(ast)) {
                 throw new Error("message " + message + " in " + currentLocale + " has error: " + ast.msg);
             }
             format = msgFormatter.compile(currentLocale, ast);
@@ -102,7 +98,7 @@ export function t(
         format = stringCachedFormats[message];
         if (format === undefined) {
             let ast = msgFormatParser.parse(message);
-            if (ast.type === "error") {
+            if (msgFormatParser.isParserError(ast)) {
                 throw new Error('message "' + message + '" has error: ' + ast.msg + " on position: " + ast.pos);
             }
             format = msgFormatter.compile(currentLocale, ast);
@@ -311,4 +307,8 @@ export function spyTranslation(spyFn?: ((text: string) => string) | null): ((tex
 if (window) {
     (<any>window)["bobrilRegisterTranslations"] = registerTranslations;
     if ((<any>window)["b"] != null) (<any>window)["b"].spyTr = spyTranslation;
+}
+
+export function T(data?: b.IFragmentData | Record<string, any>) {
+    return data;
 }

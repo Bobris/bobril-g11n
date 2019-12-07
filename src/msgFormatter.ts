@@ -2,7 +2,9 @@ import * as moment from "moment";
 import { RuntimeFunctionGenerator } from "./RuntimeFunctionGenerator";
 import * as localeDataStorage from "./localeDataStorage";
 import * as numberFormatter from "./numberFormatter";
+import { MsgAst } from "./msgFormatParser";
 import { f } from "./translate";
+import { isString, isArray } from "bobril";
 
 (<any>window).moment = moment;
 
@@ -116,11 +118,11 @@ function AnyFormatter(
     throw new Error("bad type in AnyFormatter");
 }
 
-export function compile(locale: string, msgAst: any): (params?: Object, hashArg?: string) => string {
-    if (typeof msgAst === "string") {
+export function compile(locale: string, msgAst: MsgAst): (params?: Object, hashArg?: string) => string {
+    if (isString(msgAst)) {
         return () => msgAst;
     }
-    if (Array.isArray(msgAst)) {
+    if (isArray(msgAst)) {
         if (msgAst.length === 0) return () => "";
         let comp = new RuntimeFunctionGenerator();
         let argParams = comp.addArg(0);
@@ -146,6 +148,33 @@ export function compile(locale: string, msgAst: any): (params?: Object, hashArg?
                 if (hashArg === undefined) return "#";
                 return hashArg;
             };
+        case "concat": {
+            const vals = msgAst.values;
+            if (vals.length === 0) return () => "";
+            let comp = new RuntimeFunctionGenerator();
+            let argParams = comp.addArg(0);
+            let argHash = comp.addArg(1);
+            comp.addBody("return [");
+            for (let i = 0; i < vals.length; i++) {
+                if (i > 0) comp.addBody(",");
+                let item = vals[i];
+                if (isString(item)) {
+                    comp.addBody(comp.addConstant(item));
+                } else {
+                    comp.addBody(comp.addConstant(compile(locale, item)) + `(${argParams},${argHash})`);
+                }
+            }
+            comp.addBody("];");
+            return <(params?: Object, hashArg?: string) => string>comp.build();
+        }
+        case "el":
+            if (msgAst.value != undefined) {
+                return ((id: number, valueFactory: (params?: Object, hashArg?: string) => any) => (
+                    params?: Object,
+                    hashArg?: string
+                ) => (<any>params)[id](valueFactory(params, hashArg)))(msgAst.id, compile(locale, msgAst.value));
+            }
+            return ((id: number) => (params?: Object) => (<any>params)[id]())(msgAst.id);
         case "format":
             let comp = new RuntimeFunctionGenerator();
             let argParams = comp.addArg(0);

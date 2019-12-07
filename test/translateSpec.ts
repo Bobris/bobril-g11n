@@ -23,11 +23,8 @@ describe("translate", () => {
     });
 
     describe("translations preview", () => {
-        it("is not enabled by default", () => {
-            expect(translate.spyTranslation()).toBeUndefined();
-        });
-
         it("if enabled should encapsulate text with brackets", () => {
+            expect(translate.spyTranslation()).toBeUndefined();
             translate.spyTranslation(t => `[${t}]`);
             expect(translate.t("text to translate")).toBe("[text to translate]");
         });
