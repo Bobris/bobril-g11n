@@ -1,5 +1,7 @@
 # CHANGELOG
 
+Fixed jsonp return type to be compatible with TS 4.1.x
+
 ## 5.0.0
 
 Needs TypeScript 3.7+, directly depends on Bobril. Support formatting of elements of virtual dom.
