@@ -1,4 +1,4 @@
-export function jsonp(url: string): Promise<any> {
+export function jsonp(url: string): Promise<void> {
     return new Promise((r, e) => {
         let script = document.createElement('script');
         script.type = 'text/javascript';
