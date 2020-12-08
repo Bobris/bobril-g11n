@@ -168,7 +168,7 @@ function parseFormat(): MsgAstInternal {
     if (curToken === ErrorToken) return buildError();
     let identificator = parseIdentificator();
     if (isParserError(identificator)) return identificator;
-    if (identificator[0] <= "9") {
+    if (identificator[0]! <= "9") {
         if (isCloseBracketToken()) {
             advanceNextToken();
             if (identificator[identificator.length - 1] == "/") {
@@ -197,7 +197,7 @@ function parseFormat(): MsgAstInternal {
     let res = {
         type: "format",
         id: identificator,
-        format
+        format,
     } as const;
     let name = parseIdentificator();
     if (isParserError(name)) return name;
@@ -277,7 +277,7 @@ function parseFormat(): MsgAstInternal {
             if (offsetAllowed && /^offset:/.test(chars)) {
                 let m = /^offset:*([0-9]+)$/.exec(chars);
                 if (m) {
-                    format.offset = parseInt(m[1], 10);
+                    format.offset = parseInt(m[1]!, 10);
                 } else if (chars === "offset:") {
                     skipWs();
                     if (curToken < 48 || curToken > 57) {

@@ -55,9 +55,7 @@ function AnyFormatter(
             if (style === "relative") {
                 if ((<any>options)["noago"] === true) {
                     return (val, _opt) => {
-                        return moment(val)
-                            .locale(locale)
-                            .fromNow(true);
+                        return moment(val).locale(locale).fromNow(true);
                     };
                 }
                 if ((<any>options)["noago"] === null) {
@@ -68,17 +66,13 @@ function AnyFormatter(
                     };
                 }
                 return (val, _opt) => {
-                    return moment(val)
-                        .locale(locale)
-                        .fromNow(false);
+                    return moment(val).locale(locale).fromNow(false);
                 };
             }
             if (style === "relativepast") {
                 if ((<any>options)["noago"] === true) {
                     return (val, _opt) => {
-                        return noFuture(moment(val))
-                            .locale(locale)
-                            .fromNow(true);
+                        return noFuture(moment(val)).locale(locale).fromNow(true);
                     };
                 }
                 if ((<any>options)["noago"] === null) {
@@ -89,16 +83,12 @@ function AnyFormatter(
                     };
                 }
                 return (val, _opt) => {
-                    return noFuture(moment(val))
-                        .locale(locale)
-                        .fromNow(false);
+                    return noFuture(moment(val)).locale(locale).fromNow(false);
                 };
             }
             if (style === "calendar") {
                 return (val, _opt) => {
-                    return moment(val)
-                        .locale(locale)
-                        .calendar();
+                    return moment(val).locale(locale).calendar();
                 };
             }
             if (style === "custom" && "format" in options) {
@@ -109,9 +99,7 @@ function AnyFormatter(
                 };
             }
             return (val, _opt) => {
-                return moment(val)
-                    .locale(locale)
-                    .format(style);
+                return moment(val).locale(locale).format(style);
             };
         }
     }
@@ -130,7 +118,7 @@ export function compile(locale: string, msgAst: MsgAst): (params?: Object, hashA
         comp.addBody("return ");
         for (let i = 0; i < msgAst.length; i++) {
             if (i > 0) comp.addBody("+");
-            let item = msgAst[i];
+            let item = msgAst[i]!;
             if (typeof item === "string") {
                 comp.addBody(comp.addConstant(item));
             } else {
@@ -157,7 +145,7 @@ export function compile(locale: string, msgAst: MsgAst): (params?: Object, hashA
             comp.addBody("return [");
             for (let i = 0; i < vals.length; i++) {
                 if (i > 0) comp.addBody(",");
-                let item = vals[i];
+                let item = vals[i]!;
                 if (isString(item)) {
                     comp.addBody(comp.addConstant(item));
                 } else {

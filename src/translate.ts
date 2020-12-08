@@ -28,7 +28,7 @@ function newMap(): any {
 let cfg: IG11NConfig = {
     defaultLocale: "en-US",
     pathToTranslation: () => undefined,
-    runScriptAsync: jsonp
+    runScriptAsync: jsonp,
 };
 
 let loadedLocales: { [name: string]: boolean } = newMap();
@@ -73,7 +73,7 @@ export function t(
     if (currentLocale.length === 0) {
         throw new Error("before using t you need to wait for initialization of g11n");
     }
-    let format: IMessageFormat;
+    let format: IMessageFormat | undefined;
     if (Array.isArray(message)) {
         if (typeof message[0] === "string") {
             return formatSerializedMessage(message as SerializableDelayedMessage);
@@ -165,7 +165,7 @@ export function serializeMessage(message: DelayedMessage): SerializableDelayedMe
         if (key2TranslationId!.has(m) || m.endsWith("\t1")) return message as SerializableDelayedMessage;
         return [m + "\t1", serializeParams(message[1])];
     }
-    let key = keysByTranslationId[m];
+    let key = keysByTranslationId[m]!;
     if (message.length == 1) return [key];
     return [key, serializeParams(message[1])];
 }
@@ -237,7 +237,7 @@ export function setLocale(locale: string): Promise<void> {
             if (p) {
                 prom = prom
                     .then(() => cfg.runScriptAsync!(p!))
-                    .catch(e => {
+                    .catch((e) => {
                         console.warn(e);
                         if (locale != cfg.defaultLocale)
                             return setLocale(cfg.defaultLocale!).then(() => Promise.reject(e) as Promise<void>);
@@ -282,7 +282,7 @@ export function registerTranslations(locale: string, localeDefs: any[], msgs: st
         keysByTranslationId = msgs;
         key2TranslationId = new Map<string, number>();
         for (let i = 0; i < msgs.length; i++) {
-            key2TranslationId.set(msgs[i], i);
+            key2TranslationId.set(msgs[i]!, i);
         }
         return;
     }

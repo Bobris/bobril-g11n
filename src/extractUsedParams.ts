@@ -13,7 +13,7 @@ function extractUsedParamsRec(usedParams: { [name: string]: boolean }, msgAst: M
     }
     if (isArray(msgAst)) {
         for (let i = 0; i < msgAst.length; i++) {
-            let item = msgAst[i];
+            let item = msgAst[i]!;
             extractUsedParamsRec(usedParams, item);
         }
         return;

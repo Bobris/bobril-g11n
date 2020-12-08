@@ -1,6 +1,6 @@
 {
     "name": "bobril-g11n",
-    "version": "5.0.1",
+    "version": "5.0.2",
     "description": "Bobril globalization",
     "main": "index.js",
     "typescript": {
@@ -26,6 +26,7 @@
             "noUnusedParameters": true,
             "noImplicitReturns": true,
             "noFallthroughCasesInSwitch": true,
+            "noUncheckedIndexedAccess": true,
             "strict": true,
             "strictNullChecks": true
         }
