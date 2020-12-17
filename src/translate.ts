@@ -117,7 +117,7 @@ let lazyLoadKeys: Promise<void> | undefined = undefined;
 
 export function loadSerializationKeys(): Promise<void> {
     if (lazyLoadKeys === undefined) {
-        lazyLoadKeys = cfg.runScriptAsync!(cfg.pathToTranslation!("l10nkeys")!).then(invokeInvalidate);
+        lazyLoadKeys = cfg.runScriptAsync!(cfg.pathToTranslation!("l10nkeys")!).then(b.ignoreShouldChange);
     }
     return lazyLoadKeys;
 }
@@ -205,11 +205,9 @@ export function f(message: string | DelayedMessage | SerializableDelayedMessage,
 
 let initPromise = Promise.resolve<any>(null);
 initPromise = initPromise.then(() => setLocale(cfg.defaultLocale!));
-if (b != null && b.setBeforeInit != null) {
-    b.setBeforeInit((cb: (_: any) => void) => {
-        initPromise.then(cb, cb);
-    });
-}
+b.setBeforeInit((cb: (_: any) => void) => {
+    initPromise.then(cb, cb);
+});
 
 export function initGlobalization(config?: IG11NConfig): Promise<void> {
     if (initWasStarted) {
@@ -255,13 +253,9 @@ export function setLocale(locale: string): Promise<void> {
         currentCachedFormat.length = currentTranslations.length;
         stringCachedFormats = newMap();
         moment.locale(currentLocale);
-        invokeInvalidate();
+        b.ignoreShouldChange();
     });
     return prom;
-}
-
-function invokeInvalidate() {
-    if (b != null && b.ignoreShouldChange != null) b.ignoreShouldChange();
 }
 
 export function getLocale(): string {

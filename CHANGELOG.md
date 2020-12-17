@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 5.0.3
+
+Fix bug which forced whole Bobril to be included.
+
 ## 5.0.2
 
 Make it compatible with noUncheckedIndexedAccess.
