@@ -175,9 +175,9 @@ export function compile(locale: string, msgAst: MsgAst): (params?: Object, hashA
                     comp.addBody(`var ${localArgOffset}=${localArg}-${msgAst.format.offset};`);
                     let options = msgAst.format.options;
                     for (let i = 0; i < options.length; i++) {
-                        let opt = options[i];
+                        let opt = options[i]!;
                         if (typeof opt.selector !== "number") continue;
-                        let fn = comp.addConstant(compile(locale, opt.value));
+                        let fn = comp.addConstant(compile(locale, opt.value!));
                         comp.addBody(
                             `if (${localArgOffset}===${opt.selector}) return ${fn}(${argParams},''+${localArgOffset});`
                         );
@@ -185,13 +185,13 @@ export function compile(locale: string, msgAst: MsgAst): (params?: Object, hashA
                     let localCase = comp.addLocal();
                     let pluralFn = comp.addConstant(localeDataStorage.getRules(locale).pluralFn);
                     comp.addBody(
-                        `var ${localCase}=${pluralFn}(${localArgOffset},${msgAst.format.ordinal ? "true" : "false"});`
+                        `var ${localCase}=${pluralFn}(${localArgOffset},${msgAst.format.ordinal ? "!0" : "!1"});`
                     );
                     for (let i = 0; i < options.length; i++) {
-                        let opt = options[i];
+                        let opt = options[i]!;
                         if (typeof opt.selector !== "string") continue;
                         if (opt.selector === "other") continue;
-                        let fn = comp.addConstant(compile(locale, opt.value));
+                        let fn = comp.addConstant(compile(locale, opt.value!));
                         comp.addBody(
                             `if (${localCase}===${comp.addConstant(
                                 opt.selector
@@ -199,9 +199,9 @@ export function compile(locale: string, msgAst: MsgAst): (params?: Object, hashA
                         );
                     }
                     for (let i = 0; i < options.length; i++) {
-                        let opt = options[i];
+                        let opt = options[i]!;
                         if (opt.selector !== "other") continue;
-                        let fn = comp.addConstant(compile(locale, opt.value));
+                        let fn = comp.addConstant(compile(locale, opt.value!));
                         comp.addBody(`return ${fn}(${argParams},''+${localArgOffset});`);
                     }
                     break;
@@ -209,10 +209,10 @@ export function compile(locale: string, msgAst: MsgAst): (params?: Object, hashA
                 case "select": {
                     let options = msgAst.format.options;
                     for (let i = 0; i < options.length; i++) {
-                        let opt = options[i];
+                        let opt = options[i]!;
                         if (typeof opt.selector !== "string") continue;
                         if (opt.selector === "other") continue;
-                        let fn = comp.addConstant(compile(locale, opt.value));
+                        let fn = comp.addConstant(compile(locale, opt.value!));
                         comp.addBody(
                             `if (${localArg}===${comp.addConstant(
                                 opt.selector
@@ -220,9 +220,9 @@ export function compile(locale: string, msgAst: MsgAst): (params?: Object, hashA
                         );
                     }
                     for (let i = 0; i < options.length; i++) {
-                        let opt = options[i];
+                        let opt = options[i]!;
                         if (opt.selector !== "other") continue;
-                        let fn = comp.addConstant(compile(locale, opt.value));
+                        let fn = comp.addConstant(compile(locale, opt.value!));
                         comp.addBody(`return ${fn}(${argParams},${localArg});`);
                     }
                     break;
@@ -233,37 +233,37 @@ export function compile(locale: string, msgAst: MsgAst): (params?: Object, hashA
                     let style = msgAst.format.style || "default";
                     let options = msgAst.format.options;
                     if (options) {
-                        let opt = {};
+                        let opts = {} as Record<string, any>;
                         let complex = false;
                         for (let i = 0; i < options.length; i++) {
-                            if (typeof options[i].value === "object") {
+                            let opt = options[i]!;
+                            if (typeof opt.value === "object") {
                                 complex = true;
-                                (<any>opt)[options[i].key] = null;
+                                opts[opt.key!] = null;
                             } else {
-                                let val = options[i].value;
+                                let val = opt.value as string | boolean | undefined;
                                 if (val === undefined) val = true;
-                                (<any>opt)[options[i].key] = val;
+                                opts[opt.key!] = val;
                             }
                         }
-                        let formatFn = comp.addConstant(AnyFormatter(locale, type, style, opt));
+                        let formatFn = comp.addConstant(AnyFormatter(locale, type, style, opts));
                         if (complex) {
-                            let optConst = comp.addConstant(opt);
+                            let optConst = comp.addConstant(opts);
                             let optLocal = comp.addLocal();
                             let hashArg = comp.addArg(1);
                             comp.addBody(`var ${optLocal}=${optConst};`);
                             for (let i = 0; i < options.length; i++) {
-                                if (typeof options[i].value === "object") {
-                                    let fnConst = comp.addConstant(compile(locale, options[i].value));
+                                let opt = options[i]!;
+                                if (typeof opt.value === "object") {
+                                    let fnConst = comp.addConstant(compile(locale, opt.value));
                                     comp.addBody(
-                                        `${optLocal}[${comp.addConstant(
-                                            options[i].key
-                                        )}]=${fnConst}(${argParams},${hashArg});`
+                                        `${optLocal}[${comp.addConstant(opt.key)}]=${fnConst}(${argParams},${hashArg});`
                                     );
                                 }
                             }
                             comp.addBody(`return ${formatFn}(${localArg},${optLocal});`);
                         } else {
-                            comp.addBody(`return ${formatFn}(${localArg},${comp.addConstant(opt)});`);
+                            comp.addBody(`return ${formatFn}(${localArg},${comp.addConstant(opts)});`);
                         }
                     } else {
                         let formatFn = comp.addConstant(AnyFormatter(locale, type, style, {}));

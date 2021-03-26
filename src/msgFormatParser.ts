@@ -9,7 +9,17 @@ export type MsgAst =
     | { type: "hash" }
     | { type: "arg"; id: string }
     | { type: "el"; id: number; value?: MsgAst }
-    | { type: "format"; id: string; format: Record<string, any> }
+    | {
+          type: "format";
+          id: string;
+          format: {
+              type: string;
+              style?: string;
+              offset?: number;
+              ordinal?: boolean;
+              options: { key?: string; selector?: number | string; value?: MsgAst }[];
+          };
+      }
     | { type: "concat"; values: Array<MsgAst> };
 
 type MsgAstInternal = MsgAst | { type: "open"; id: number } | { type: "close"; id: number };

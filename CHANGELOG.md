@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 5.0.4
+
+Make it compatible with noPropertyAccessFromIndexSignature.
+
 ## 5.0.3
 
 Fix bug which forced whole Bobril to be included.

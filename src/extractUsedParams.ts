@@ -39,8 +39,7 @@ function extractUsedParamsRec(usedParams: { [name: string]: boolean }, msgAst: M
                 case "select": {
                     let options = msgAst.format.options;
                     for (let i = 0; i < options.length; i++) {
-                        let opt = options[i];
-                        extractUsedParamsRec(usedParams, opt.value);
+                        extractUsedParamsRec(usedParams, options[i]!.value!);
                     }
                     break;
                 }
@@ -50,8 +49,9 @@ function extractUsedParamsRec(usedParams: { [name: string]: boolean }, msgAst: M
                     let options = msgAst.format.options;
                     if (options) {
                         for (let i = 0; i < options.length; i++) {
-                            if (typeof options[i].value === "object") {
-                                extractUsedParamsRec(usedParams, options[i].value);
+                            let opt = options[i]!;
+                            if (typeof opt.value === "object") {
+                                extractUsedParamsRec(usedParams, opt.value);
                             }
                         }
                     }
