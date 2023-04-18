@@ -7,16 +7,16 @@ export function escapeRegExp(str: string): string {
     return str.replace(escapeRegExpMatcher, "\\$&");
 }
 
-export function buildFormatter(rules: ILocaleRules, format: string): (val: number) => string {
+export function buildFormatter(rules: ILocaleRules, format: string, interpret = false): (val: number) => string {
     if (format == "0b" || format == "0 b") {
-        const suffixes = ['B', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
+        const suffixes = ["B", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB"];
         const space = format == "0 b" ? "\xa0" : "";
         return (val: number) => {
             let suffix = "";
             for (let power = 0; power <= suffixes.length; power++) {
                 var min = Math.pow(1000, power);
                 var max = Math.pow(1000, power + 1);
-                if (val === 0 || val >= min && val < max) {
+                if (val === 0 || (val >= min && val < max)) {
                     suffix += suffixes[power];
                     if (min > 0) {
                         val = val / min;
@@ -28,10 +28,10 @@ export function buildFormatter(rules: ILocaleRules, format: string): (val: numbe
         };
     }
     if (format.indexOf("%") >= 0) {
-        const nested = buildFormatter(rules, format.replace("%", ""));
+        const nested = buildFormatter(rules, format.replace("%", ""), interpret);
         return (val: number) => {
             return nested(val * 100) + "%";
-        }
+        };
     }
     let decOpt = false;
     if (format.indexOf("[.]") >= 0) {
@@ -53,16 +53,53 @@ export function buildFormatter(rules: ILocaleRules, format: string): (val: numbe
         let inOpt = false;
         while (++pos < format.length) {
             let ch = format.charCodeAt(pos);
-            if (ch == 48) { // '0'
+            if (ch == 48) {
+                // '0'
                 maxDec++;
                 if (!inOpt) minDec++;
-            } else if (ch == 91) { // '['
+            } else if (ch == 91) {
+                // '['
                 inOpt = true;
             } else break;
         }
     }
     if (decOpt && minDec < 2) {
-        decOpt = false; minDec = 0;
+        decOpt = false;
+        minDec = 0;
+    }
+    if (interpret) {
+        return (val: number) => {
+            let locIsNeg = false;
+            if (val < 0) {
+                locIsNeg = true;
+                val = -val;
+            }
+            let loc = val.toFixed(maxDec);
+            let locBefore = loc;
+            let locDec = "";
+
+            if (maxDec > 0) {
+                locBefore = loc.slice(0, loc.length - maxDec - 1);
+                locDec = loc.slice(loc.length - maxDec);
+                if (minDec < maxDec) {
+                    locDec = locDec.replace(new RegExp(`0{1,${maxDec - minDec}}$`), "");
+                }
+                if (decOpt) {
+                    if (locDec == Array(minDec + 1).join("0")) locDec = "";
+                }
+                if (locDec != "") locDec = rules.dd + locDec;
+            }
+            if (hasThousands) {
+                locBefore = locBefore.replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1" + rules.td);
+            }
+            loc = locBefore + locDec;
+            if (negPar) {
+                if (locIsNeg) loc = "(" + loc + ")";
+            } else {
+                if (locIsNeg) loc = "-" + loc;
+            }
+            return loc;
+        };
     }
     let g = new RuntimeFunctionGenerator();
     const arg = g.addArg(0);
@@ -75,15 +112,15 @@ export function buildFormatter(rules: ILocaleRules, format: string): (val: numbe
     if (maxDec == 0) {
         g.addBody(`${locBefore}=${loc};`);
     } else {
-        g.addBody(`${locBefore}=${loc}.substr(0,${loc}.length-${maxDec + 1});`);
-        g.addBody(`${locDec}=${loc}.substr(${loc}.length-${maxDec});`);
+        g.addBody(`${locBefore}=${loc}.slice(0,${loc}.length-${maxDec + 1});`);
+        g.addBody(`${locDec}=${loc}.slice(${loc}.length-${maxDec});`);
         if (minDec < maxDec) {
             g.addBody(`${locDec}=${locDec}.replace(/0{1,${maxDec - minDec}}$/,'');`);
         }
         if (decOpt) {
-            g.addBody(`if (${locDec}=='${Array(minDec + 1).join('0')}') ${locDec}='';`);
+            g.addBody(`if (${locDec}=='${Array(minDec + 1).join("0")}') ${locDec}='';`);
         }
-        g.addBody(`if (${locDec}!='') ${locDec}='${rules.dd}'+${locDec};`)
+        g.addBody(`if (${locDec}!='') ${locDec}='${rules.dd}'+${locDec};`);
     }
     if (hasThousands) {
         g.addBody(`${locBefore}=${locBefore}.replace(/(\\d)(?=(\\d{3})+(?!\\d))/g,'$1${rules.td}');`);
@@ -117,5 +154,5 @@ export function buildUnformat(rules: ILocaleRules): (val: string) => number {
             }
         }
         return parseFloat(val.replace(tdMatcher, "").replace(dd, ".")) * coef;
-    }
+    };
 }

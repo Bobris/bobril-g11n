@@ -12,6 +12,12 @@ export interface IG11NConfig {
     runScriptAsync?: (url: string) => Promise<void>;
 }
 
+let noEval = false;
+
+export function setNoEval(value = true) {
+    noEval = value;
+}
+
 export type DelayedMessage = [number | string, Object?];
 export type SerializableDelayedMessage = [string, Object?];
 
@@ -90,7 +96,7 @@ export function t(
             if (msgFormatParser.isParserError(ast)) {
                 throw new Error("message " + message + " in " + currentLocale + " has error: " + ast.msg);
             }
-            format = msgFormatter.compile(currentLocale, ast);
+            format = msgFormatter.compile(currentLocale, ast, noEval);
             currentCachedFormat[message] = format;
         }
     } else {
@@ -101,7 +107,7 @@ export function t(
             if (msgFormatParser.isParserError(ast)) {
                 throw new Error('message "' + message + '" has error: ' + ast.msg + " on position: " + ast.pos);
             }
-            format = msgFormatter.compile(currentLocale, ast);
+            format = msgFormatter.compile(currentLocale, ast, noEval);
             stringCachedFormats[message] = format;
         }
     }

@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 5.1.0
+
+Add method `setNoEval()` to forbid using `new Function` to speed up formatting, but it does not require CSP script unsafe-eval.
+
 ## 5.0.4
 
 Make it compatible with noPropertyAccessFromIndexSignature.

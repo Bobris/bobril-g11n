@@ -9,13 +9,8 @@
     "forceConsistentCasingInFileNames": true,
     "jsx": "react",
     "lib": [
-      "es5",
-      "dom",
-      "es2015.core",
-      "es2015.promise",
-      "es2015.iterable",
-      "es2015.generator",
-      "es2015.collection"
+      "es2019",
+      "dom"
     ],
     "module": "commonjs",
     "noEmitHelpers": true,
@@ -34,11 +29,11 @@
     "sourceMap": true,
     "strict": true,
     "strictNullChecks": true,
-    "target": "es5",
+    "target": "es2019",
     "resolveJsonModule": true
   },
   "files": [
-    "C:/Users/boris/.bbcore/tools/jasmine330.d.ts"
+    "C:/Users/b.letocha/.bbcore/tools/jasmine330.d.ts"
   ],
   "include": [
     "**/*"

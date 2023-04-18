@@ -4,7 +4,7 @@ import * as localeDataStorage from "./localeDataStorage";
 import * as numberFormatter from "./numberFormatter";
 import { MsgAst } from "./msgFormatParser";
 import { f } from "./translate";
-import { isString, isArray } from "bobril";
+import { isString, isArray, isNumber } from "bobril";
 
 (<any>window).moment = moment;
 
@@ -106,7 +106,144 @@ function AnyFormatter(
     throw new Error("bad type in AnyFormatter");
 }
 
-export function compile(locale: string, msgAst: MsgAst): (params?: Object, hashArg?: string) => string {
+export function compile(
+    locale: string,
+    msgAst: MsgAst,
+    interpret = false
+): (params?: Object, hashArg?: string) => string {
+    if (interpret) {
+        return (params?: Object, hashArg?: string) => {
+            if (isString(msgAst)) {
+                return msgAst;
+            }
+            if (isArray(msgAst)) {
+                if (msgAst.length === 0) return "";
+                let res = "";
+                for (let i = 0; i < msgAst.length; i++) {
+                    let item = msgAst[i]!;
+                    if (isString(item)) {
+                        res += item;
+                    } else {
+                        res += compile(locale, item, true)(params, hashArg);
+                    }
+                }
+                return res;
+            }
+            switch (msgAst.type) {
+                case "arg":
+                    return f((<any>params)[msgAst.id]);
+                case "hash":
+                    if (hashArg === undefined) return "#";
+                    return hashArg;
+                case "concat": {
+                    const vals = msgAst.values;
+                    if (vals.length === 0) return "";
+                    let res = [];
+                    for (let i = 0; i < vals.length; i++) {
+                        let item = vals[i]!;
+                        if (isString(item)) {
+                            res.push(item);
+                        } else {
+                            res.push(compile(locale, item, true)(params, hashArg));
+                        }
+                    }
+                    return res;
+                }
+                case "el":
+                    if (msgAst.value != undefined) {
+                        return (<any>params)[msgAst.id](compile(locale, msgAst.value, true)(params, hashArg));
+                    }
+                    return (<any>params)[msgAst.id]();
+                case "format":
+                    var local = (<any>params)[msgAst.id];
+                    let type = msgAst.format.type;
+                    switch (type) {
+                        case "plural": {
+                            let localArgOffset = local - msgAst.format.offset!;
+                            let options = msgAst.format.options;
+                            for (let i = 0; i < options.length; i++) {
+                                let opt = options[i]!;
+                                if (!isNumber(opt.selector)) continue;
+                                if (opt.selector === localArgOffset) {
+                                    return compile(locale, opt.value!, true)(params, "" + localArgOffset);
+                                }
+                            }
+                            let localCase = localeDataStorage
+                                .getRules(locale)
+                                .pluralFn(localArgOffset, !!msgAst.format.ordinal);
+                            for (let i = 0; i < options.length; i++) {
+                                let opt = options[i]!;
+                                if (opt.selector === localCase) {
+                                    return compile(locale, opt.value!, true)(params, "" + localArgOffset);
+                                }
+                            }
+                            for (let i = 0; i < options.length; i++) {
+                                let opt = options[i]!;
+                                if (opt.selector !== "other") continue;
+                                return compile(locale, opt.value!, true)(params, "" + localArgOffset);
+                            }
+                            break;
+                        }
+                        case "select": {
+                            let options = msgAst.format.options;
+                            for (let i = 0; i < options.length; i++) {
+                                let opt = options[i]!;
+                                if (!isString(opt.selector)) continue;
+                                if (opt.selector === "other") continue;
+                                if (opt.selector === local) {
+                                    return compile(locale, opt.value!, true)(params, local);
+                                }
+                            }
+                            for (let i = 0; i < options.length; i++) {
+                                let opt = options[i]!;
+                                if (opt.selector !== "other") continue;
+                                return compile(locale, opt.value!, true)(params, local);
+                            }
+                            break;
+                        }
+                        case "number":
+                        case "date":
+                        case "time": {
+                            let style = msgAst.format.style || "default";
+                            let options = msgAst.format.options;
+                            if (options) {
+                                let opts = {} as Record<string, any>;
+                                let complex = false;
+                                for (let i = 0; i < options.length; i++) {
+                                    let opt = options[i]!;
+                                    if (typeof opt.value === "object") {
+                                        complex = true;
+                                        opts[opt.key!] = null;
+                                    } else {
+                                        let val = opt.value as string | boolean | undefined;
+                                        if (val === undefined) val = true;
+                                        opts[opt.key!] = val;
+                                    }
+                                }
+                                let formatFn = AnyFormatter(locale, type, style, opts);
+                                if (complex) {
+                                    let optLocal = opts;
+                                    for (let i = 0; i < options.length; i++) {
+                                        let opt = options[i]!;
+                                        if (typeof opt.value === "object") {
+                                            optLocal[opt.key!] = compile(locale, opt.value, true)(params, hashArg);
+                                        }
+                                    }
+                                    return formatFn(local, optLocal);
+                                } else {
+                                    return formatFn(local, opts);
+                                }
+                            } else {
+                                let formatFn = AnyFormatter(locale, type, style, {});
+                                return formatFn(local, {});
+                            }
+                        }
+                    }
+                    return "";
+            }
+            throw new Error("invalid AST in compile");
+        };
+    }
     if (isString(msgAst)) {
         return () => msgAst;
     }
@@ -130,7 +267,10 @@ export function compile(locale: string, msgAst: MsgAst): (params?: Object, hashA
     }
     switch (msgAst.type) {
         case "arg":
-            return ((name: string) => (params?: Object) => f((<any>params)[name]))(msgAst.id);
+            return (
+                (name: string) => (params?: Object) =>
+                    f((<any>params)[name])
+            )(msgAst.id);
         case "hash":
             return (_params, hashArg) => {
                 if (hashArg === undefined) return "#";
@@ -157,12 +297,16 @@ export function compile(locale: string, msgAst: MsgAst): (params?: Object, hashA
         }
         case "el":
             if (msgAst.value != undefined) {
-                return ((id: number, valueFactory: (params?: Object, hashArg?: string) => any) => (
-                    params?: Object,
-                    hashArg?: string
-                ) => (<any>params)[id](valueFactory(params, hashArg)))(msgAst.id, compile(locale, msgAst.value));
+                return (
+                    (id: number, valueFactory: (params?: Object, hashArg?: string) => any) =>
+                    (params?: Object, hashArg?: string) =>
+                        (<any>params)[id](valueFactory(params, hashArg))
+                )(msgAst.id, compile(locale, msgAst.value));
             }
-            return ((id: number) => (params?: Object) => (<any>params)[id]())(msgAst.id);
+            return (
+                (id: number) => (params?: Object) =>
+                    (<any>params)[id]()
+            )(msgAst.id);
         case "format":
             let comp = new RuntimeFunctionGenerator();
             let argParams = comp.addArg(0);
@@ -176,7 +320,7 @@ export function compile(locale: string, msgAst: MsgAst): (params?: Object, hashA
                     let options = msgAst.format.options;
                     for (let i = 0; i < options.length; i++) {
                         let opt = options[i]!;
-                        if (typeof opt.selector !== "number") continue;
+                        if (!isNumber(opt.selector)) continue;
                         let fn = comp.addConstant(compile(locale, opt.value!));
                         comp.addBody(
                             `if (${localArgOffset}===${opt.selector}) return ${fn}(${argParams},''+${localArgOffset});`
@@ -189,7 +333,7 @@ export function compile(locale: string, msgAst: MsgAst): (params?: Object, hashA
                     );
                     for (let i = 0; i < options.length; i++) {
                         let opt = options[i]!;
-                        if (typeof opt.selector !== "string") continue;
+                        if (!isString(opt.selector)) continue;
                         if (opt.selector === "other") continue;
                         let fn = comp.addConstant(compile(locale, opt.value!));
                         comp.addBody(
