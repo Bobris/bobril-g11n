@@ -8,11 +8,11 @@ describe("modules", () => {
     });
 });
 
-for (let interpret = 0; interpret < 2; interpret++) {
+[false, true].forEach((interpret) => {
     describe("Formatter " + (interpret ? "interpret" : "compile"), () => {
         function check(msg: string, params: Object, result: any, locale: string = "en-US") {
             let ast = msgFormatParser.parse(msg);
-            let fn = msgFormatter.compile(locale, ast, interpret != 0);
+            let fn = msgFormatter.compile(locale, ast, interpret);
             expect(fn(params)).toEqual(result);
         }
 
@@ -114,4 +114,4 @@ for (let interpret = 0; interpret < 2; interpret++) {
             ]);
         });
     });
-}
+});
