@@ -33,7 +33,7 @@
     "resolveJsonModule": true
   },
   "files": [
-    "C:/Users/b.letocha/.bbcore/tools/jasmine330.d.ts"
+    "/Users/borisletocha/.bbcore/tools/jasmine330.d.ts"
   ],
   "include": [
     "**/*"
