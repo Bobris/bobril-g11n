@@ -260,7 +260,7 @@ export function compile(
             if (typeof item === "string") {
                 comp.addBody(comp.addConstant(item));
             } else {
-                comp.addBody(comp.addConstant(compile(locale, item)) + `(${argParams},${argHash})`);
+                comp.addBody(comp.addConstant(compile(locale, item)), `(${argParams},${argHash})`);
             }
         }
         comp.addBody(";");
@@ -290,7 +290,7 @@ export function compile(
                 if (isString(item)) {
                     comp.addBody(comp.addConstant(item));
                 } else {
-                    comp.addBody(comp.addConstant(compile(locale, item)) + `(${argParams},${argHash})`);
+                    comp.addBody(comp.addConstant(compile(locale, item)), `(${argParams},${argHash})`);
                 }
             }
             comp.addBody("];");
@@ -300,8 +300,8 @@ export function compile(
             if (msgAst.value != undefined) {
                 return (
                     (id: number, valueFactory: (params?: Object, hashArg?: string) => any) =>
-                        (params?: Object, hashArg?: string) =>
-                            (<any>params)[id](valueFactory(params, hashArg))
+                    (params?: Object, hashArg?: string) =>
+                        (<any>params)[id](valueFactory(params, hashArg))
                 )(msgAst.id, compile(locale, msgAst.value));
             }
             return (

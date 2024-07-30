@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 5.1.2
+
+Slightly improved performance of `RuntimeFunctionGenerator` function.
+
 ## 5.1.1
 
 Fixed that in some cases eval was still used eventhough disabled with `setNoEval()`.
