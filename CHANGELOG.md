@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 5.2.0
+
+Improved error message to better understand what is wrong with client system.
+
 ## 5.1.2
 
 Slightly improved performance of `RuntimeFunctionGenerator` function.

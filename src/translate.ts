@@ -27,25 +27,22 @@ interface IMessageFormat {
     (params?: Object): string;
 }
 
-function newMap(): any {
-    return Object.create(null);
-}
-
 let cfg: IG11NConfig = {
     defaultLocale: "en-US",
     pathToTranslation: () => undefined,
     runScriptAsync: jsonp,
 };
 
-let loadedLocales: { [name: string]: boolean } = newMap();
-export let registeredTranslations: { [name: string]: string[] } = newMap();
+let failedToLoadLocales: Set<string> = new Set();
+let loadedLocales: Set<string> = new Set();
+export let registeredTranslations: { [name: string]: string[] } = Object.create(null);
 let initWasStarted = false;
 let currentLocale = "";
 let currentRules: localeDataStorage.ILocaleRules = localeDataStorage.getRules("en");
 let currentUnformatter: ((val: string) => number) | undefined;
 let currentTranslations: string[] = [];
 let currentCachedFormat: IMessageFormat[] = [];
-let stringCachedFormats: { [input: string]: IMessageFormat } = newMap();
+let stringCachedFormats: Map<string, IMessageFormat> = new Map();
 let keysByTranslationId: string[] | undefined = undefined;
 let key2TranslationId: Map<string, number> | undefined = undefined;
 
@@ -60,7 +57,16 @@ if ((<any>window).g11nLoc) {
 function currentTranslationMessage(message: number): string {
     let text = currentTranslations[message];
     if (text === undefined) {
-        throw new Error("message " + message + " is not defined");
+        throw new Error(
+            "Message " +
+                message +
+                " is not defined. Current locale: " +
+                currentLocale +
+                " Loaded locales: " +
+                Array.from(loadedLocales).join(", ") +
+                " Failed to load locales: " +
+                Array.from(failedToLoadLocales).join(", ")
+        );
     }
     return text;
 }
@@ -101,14 +107,14 @@ export function t(
         }
     } else {
         if (params == null) return spyTranslatedString(message);
-        format = stringCachedFormats[message];
+        format = stringCachedFormats.get(message);
         if (format === undefined) {
             let ast = msgFormatParser.parse(message);
             if (msgFormatParser.isParserError(ast)) {
                 throw new Error('message "' + message + '" has error: ' + ast.msg + " on position: " + ast.pos);
             }
             format = msgFormatter.compile(currentLocale, ast, noEval);
-            stringCachedFormats[message] = format;
+            stringCachedFormats.set(message, format);
         }
     }
     return spyTranslatedString(format(params));
@@ -222,7 +228,7 @@ export function initGlobalization(config?: IG11NConfig): Promise<void> {
     Object.assign(cfg, config);
     initWasStarted = true;
     if (currentLocale.length !== 0) {
-        if (!loadedLocales[currentLocale]) {
+        if (!loadedLocales.has(currentLocale)) {
             currentLocale = "";
         }
         return setLocale(cfg.defaultLocale!);
@@ -234,15 +240,21 @@ export function setLocale(locale: string): Promise<void> {
     let prom = Promise.resolve();
     if (currentLocale === locale) return prom;
     var lcLocale = locale.toLowerCase();
-    if (!loadedLocales[lcLocale]) {
+    if (!loadedLocales.has(lcLocale)) {
         let pathToTranslation = cfg.pathToTranslation;
         if (pathToTranslation) {
             let p = pathToTranslation(locale);
             if (p) {
                 prom = prom
                     .then(() => cfg.runScriptAsync!(p!))
+                    .then(() => {
+                        if (!loadedLocales.has(lcLocale)) {
+                            throw Error("Locale " + locale + " was not loaded correctly");
+                        }
+                    })
                     .catch((e) => {
                         console.warn(e);
+                        failedToLoadLocales.add(locale);
                         if (locale != cfg.defaultLocale)
                             return setLocale(cfg.defaultLocale!).then(() => Promise.reject(e) as Promise<void>);
                         return undefined;
@@ -257,7 +269,7 @@ export function setLocale(locale: string): Promise<void> {
         currentUnformatter = undefined;
         currentCachedFormat = [];
         currentCachedFormat.length = currentTranslations.length;
-        stringCachedFormats = newMap();
+        stringCachedFormats = new Map();
         moment.locale(currentLocale);
         b.ignoreShouldChange();
     });
@@ -291,7 +303,7 @@ export function registerTranslations(locale: string, localeDefs: any[], msgs: st
         localeDataStorage.setRules(locale, localeDefs);
     }
     if (Array.isArray(msgs)) registeredTranslations[locale] = msgs;
-    loadedLocales[locale] = true;
+    loadedLocales.add(locale);
 }
 
 export function spyTranslation(spyFn?: ((text: string) => string) | null): ((text: string) => string) | undefined {
