@@ -36,7 +36,6 @@ let cfg: IG11NConfig = {
 let failedToLoadLocales: Set<string> = new Set();
 let loadedLocales: Set<string> = new Set();
 export let registeredTranslations: { [name: string]: string[] } = Object.create(null);
-let initWasStarted = false;
 let currentLocale = "";
 let currentRules: localeDataStorage.ILocaleRules = localeDataStorage.getRules("en");
 let currentUnformatter: ((val: string) => number) | undefined;
@@ -215,18 +214,13 @@ export function f(message: string | DelayedMessage | SerializableDelayedMessage,
     return t(message, params);
 }
 
-let initPromise = Promise.resolve<any>(null);
-initPromise = initPromise.then(() => setLocale(cfg.defaultLocale!));
+let initPromise = Promise.resolve<any>(undefined).then(() => setLocale(cfg.defaultLocale!));
 b.setBeforeInit((cb: (_: any) => void) => {
     initPromise.then(cb, cb);
 });
 
 export function initGlobalization(config?: IG11NConfig): Promise<void> {
-    if (initWasStarted) {
-        throw new Error("initLocalization must be called only once");
-    }
     Object.assign(cfg, config);
-    initWasStarted = true;
     if (currentLocale.length !== 0) {
         if (!loadedLocales.has(currentLocale)) {
             currentLocale = "";
@@ -236,44 +230,39 @@ export function initGlobalization(config?: IG11NConfig): Promise<void> {
     return initPromise;
 }
 
-export function setLocale(locale: string): Promise<void> {
-    let prom = Promise.resolve();
-    if (currentLocale === locale) return prom;
+export async function setLocale(locale: string): Promise<void> {
+    if (currentLocale === locale) return;
     var lcLocale = locale.toLowerCase();
     if (!loadedLocales.has(lcLocale)) {
         let pathToTranslation = cfg.pathToTranslation;
         if (pathToTranslation) {
             let p = pathToTranslation(locale);
             if (p) {
-                prom = prom
-                    .then(() => cfg.runScriptAsync!(p!))
-                    .then(() => {
-                        if (!loadedLocales.has(lcLocale)) {
-                            throw Error("Locale " + locale + " was not loaded correctly");
-                        }
-                    })
-                    .catch((e) => {
-                        console.warn(e);
-                        failedToLoadLocales.add(locale);
-                        if (locale != cfg.defaultLocale)
-                            return setLocale(cfg.defaultLocale!).then(() => Promise.reject(e) as Promise<void>);
-                        return undefined;
-                    });
+                try {
+                    await cfg.runScriptAsync!(p!);
+                    if (!loadedLocales.has(lcLocale)) {
+                        throw Error("Locale " + locale + " was not loaded correctly");
+                    }
+                } catch (e) {
+                    console.warn(e);
+                    failedToLoadLocales.add(locale);
+                    if (locale != cfg.defaultLocale) {
+                        await setLocale(cfg.defaultLocale!);
+                    }
+                    throw e;
+                }
             }
         }
     }
-    prom = prom.then(() => {
-        currentLocale = locale;
-        currentRules = localeDataStorage.getRules(lcLocale);
-        currentTranslations = registeredTranslations[lcLocale] || [];
-        currentUnformatter = undefined;
-        currentCachedFormat = [];
-        currentCachedFormat.length = currentTranslations.length;
-        stringCachedFormats = new Map();
-        moment.locale(currentLocale);
-        b.ignoreShouldChange();
-    });
-    return prom;
+    currentLocale = locale;
+    currentRules = localeDataStorage.getRules(lcLocale);
+    currentTranslations = registeredTranslations[lcLocale] || [];
+    currentUnformatter = undefined;
+    currentCachedFormat = [];
+    currentCachedFormat.length = currentTranslations.length;
+    stringCachedFormats = new Map();
+    moment.locale(currentLocale);
+    b.ignoreShouldChange();
 }
 
 export function getLocale(): string {
