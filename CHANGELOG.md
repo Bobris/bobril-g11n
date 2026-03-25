@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 5.4.0
+
+Fix compatibility with TS 6.0.2
+
 ## 5.3.0
 
 `setLocale` now return rejected promise when it fails. `initGlobalization` can be called multiple times, but normally it should be called only once.
