@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 5.4.1
+
+Fix `getMoment` typing and moment usage compatibility with TS 6.0 namespace import checks.
+
 ## 5.4.0
 
 Fix compatibility with TS 6.0.2

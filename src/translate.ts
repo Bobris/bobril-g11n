@@ -1,5 +1,5 @@
 import * as b from "bobril";
-import * as moment from "moment";
+import moment from "moment";
 import * as msgFormatParser from "./msgFormatParser";
 import * as msgFormatter from "./msgFormatter";
 import { jsonp } from "./jsonp";

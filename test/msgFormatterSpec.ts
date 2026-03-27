@@ -1,4 +1,4 @@
-import * as moment from "moment";
+import moment from "moment";
 import * as msgFormatParser from "../src/msgFormatParser";
 import * as msgFormatter from "../src/msgFormatter";
 

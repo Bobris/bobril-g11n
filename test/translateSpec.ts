@@ -22,6 +22,10 @@ describe("translate", () => {
         expect(translate.unformatNumber("(10%)")).toBe(-0.1);
     });
 
+    it("getMoment stays callable", () => {
+        expect(translate.getMoment(new Date(2000, 0, 1)).format("LTS")).toBe("12:00:00 AM");
+    });
+
     describe("translations preview", () => {
         it("if enabled should encapsulate text with brackets", () => {
             expect(translate.spyTranslation()).toBeUndefined();
