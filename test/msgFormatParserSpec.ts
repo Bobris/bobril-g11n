@@ -10,6 +10,12 @@ describe("Parser", () => {
         check("", "");
         check("Escape \\\\ \\# \\u0041 \\{ \\}", "Escape \\ # \u0041 { }");
         check("Hello {a}!", ["Hello ", { type: "arg", id: "a" }, "!"]);
+        check("The {name, space}room is full.", [
+            "The ",
+            { type: "format", id: "name", format: { type: "space", options: [] } },
+            "room is full."
+        ]);
+        check("{name, surround_test}", { type: "format", id: "name", format: { type: "surround_test", options: [] } });
         check("{arg, number}", { type: "format", id: "arg", format: { type: "number", style: null, options: null } });
         check("{arg, time, relative}", {
             type: "format",
@@ -228,7 +234,7 @@ describe("Parser", () => {
     it("catch all errors", () => {
         error("{");
         error("{a");
-        error("{a, invalid}");
+        error("{a, invalid, extra}");
         error("{floor, selectordinal, =0{ground} one{#st} bad{#nd} few{#rd} other{#th}}");
         error("{1}");
         error("{1}{/2}");

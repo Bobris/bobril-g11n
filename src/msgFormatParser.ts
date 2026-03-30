@@ -352,7 +352,13 @@ function parseFormat(): MsgAstInternal {
         advanceNextToken();
         return res;
     }
-    return buildError('Expecting one of "number", "time", "date", "plural", "selectordinal", "select".');
+    format.type = name;
+    format.options = [];
+    if (isCloseBracketToken()) {
+        advanceNextToken();
+        return res;
+    }
+    return buildError('Custom formatter does not accept parameters');
 }
 
 function parseMsg(endWithEOF: boolean | number): MsgAst {

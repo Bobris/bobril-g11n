@@ -67,6 +67,12 @@ simpleFormat
 			options: style && style[4]
         };
     }
+    / type:identifier {
+        return {
+            type: type,
+            options: []
+        };
+    }
 
 pluralFormat
     = 'plural' _ ',' _ pluralStyle:pluralStyle {

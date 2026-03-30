@@ -20,6 +20,28 @@ describe("modules", () => {
             check("Hello {a}!", { a: "World" }, "Hello World!");
         });
 
+        it("optional space", () => {
+            check("The {name, space}room is full.", { name: "server" }, "The server room is full.");
+            check("The {name, space}room is full.", { name: "" }, "The room is full.");
+            check("The {name, space}room is full.", { name: undefined }, "The room is full.");
+        });
+
+        it("custom formatter", () => {
+            msgFormatter.registerCustomFormatter("surround_test", (value) => "[" + (value == null ? "" : String(value)) + "]");
+            check("Value: {name, surround_test}", { name: "x" }, "Value: [x]");
+        });
+
+        it("custom formatter gets raw value", () => {
+            let captured: unknown;
+            msgFormatter.registerCustomFormatter("capture_test", (value) => {
+                captured = value;
+                return "ok";
+            });
+            const raw = { nested: "value" };
+            check("Value: {name, capture_test}", { name: raw }, "Value: ok");
+            expect(captured).toBe(raw);
+        });
+
         it("ordinal", () => {
             check(
                 "{floor, selectordinal, =0{ground} one{#st} two{#nd} few{#rd} other{#th}} floor",

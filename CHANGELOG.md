@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 5.5.0
+
+Add generic custom message formatters through `registerCustomFormatter(name, fn)`. Message parser now accepts custom formatter names and the default `space` formatter can be used in messages like `The {name, space}room is full.`
+
 ## 5.4.1
 
 Fix `getMoment` typing and moment usage compatibility with TS 6.0 namespace import checks.

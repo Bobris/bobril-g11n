@@ -9,6 +9,7 @@ import { isString, isArray, isNumber } from "bobril";
 (<any>window).moment = moment;
 
 var numberFormatterCache: { [locale_format: string]: (val: number) => string } = Object.create(null);
+const customFormatters = new Map<string, (value: unknown) => string>();
 
 function getFormatter(locale: string, format: string, interpret: boolean): (val: number) => string {
     const key = interpret + "|" + locale + "|" + format;
@@ -23,6 +24,23 @@ function noFuture(m: moment.Moment): moment.Moment {
     if (m.toDate() > new Date()) return moment(new Date());
     return m;
 }
+
+function formatWithOptionalSpace(value: unknown): string {
+    if (value == null || value === "") return "";
+    return String(value) + " ";
+}
+
+export function registerCustomFormatter(name: string, fn: (value: unknown) => string) {
+    customFormatters.set(name, fn);
+}
+
+function getCustomFormatter(name: string): (value: unknown) => string {
+    const formatter = customFormatters.get(name);
+    if (formatter === undefined) throw new Error('Unknown custom formatter "' + name + '"');
+    return formatter;
+}
+
+registerCustomFormatter("space", formatWithOptionalSpace);
 
 function AnyFormatter(
     locale: string,
@@ -240,7 +258,7 @@ export function compile(
                             }
                         }
                     }
-                    return "";
+                    return getCustomFormatter(type)(local);
             }
             throw new Error("invalid AST in compile");
         };
@@ -414,6 +432,12 @@ export function compile(
                         let formatFn = comp.addConstant(AnyFormatter(locale, type, style, {}, interpret));
                         comp.addBody(`return ${formatFn}(${localArg});`);
                     }
+                    break;
+                }
+                default: {
+                    let formatFn = comp.addConstant(getCustomFormatter(type));
+                    comp.addBody(`return ${formatFn}(${localArg});`);
+                    break;
                 }
             }
             return <(params?: Object, hashArg?: string) => string>comp.build();
