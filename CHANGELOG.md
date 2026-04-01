@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+## 5.6.0
+
 Add default `quoted` formatter that returns an empty string for `null`, `undefined`, and empty string values, otherwise wraps the value in double quotes and appends trailing space.
 
 Add `deploy:patch`, `deploy:minor`, and `deploy:major` scripts that run via Bun, bump `package.json` version, and move current `## Unreleased` notes into a new versioned section in `CHANGELOG.md`.
