@@ -33,7 +33,10 @@
         }
     },
     "scripts": {
-        "test": "bb test"
+        "test": "bb test",
+        "deploy:patch": "bun scripts/deployVersion.js patch",
+        "deploy:minor": "bun scripts/deployVersion.js minor",
+        "deploy:major": "bun scripts/deployVersion.js major"
     },
     "author": "Boris Letocha",
     "license": "MIT",

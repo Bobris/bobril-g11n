@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## Unreleased
+
+Add default `quoted` formatter that returns an empty string for `null`, `undefined`, and empty string values, otherwise wraps the value in double quotes and appends trailing space.
+
+Add `deploy:patch`, `deploy:minor`, and `deploy:major` scripts that run via Bun, bump `package.json` version, and move current `## Unreleased` notes into a new versioned section in `CHANGELOG.md`.
+
 ## 5.5.0
 
 Add generic custom message formatters through `registerCustomFormatter(name, fn)`. Message parser now accepts custom formatter names and the default `space` formatter can be used in messages like `The {name, space}room is full.`

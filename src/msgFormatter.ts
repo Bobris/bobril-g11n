@@ -30,6 +30,11 @@ function formatWithOptionalSpace(value: unknown): string {
     return String(value) + " ";
 }
 
+function formatWithQuotedValue(value: unknown): string {
+    if (value == null || value === "") return "";
+    return '"' + String(value) + '" ';
+}
+
 export function registerCustomFormatter(name: string, fn: (value: unknown) => string) {
     customFormatters.set(name, fn);
 }
@@ -41,6 +46,7 @@ function getCustomFormatter(name: string): (value: unknown) => string {
 }
 
 registerCustomFormatter("space", formatWithOptionalSpace);
+registerCustomFormatter("quoted", formatWithQuotedValue);
 
 function AnyFormatter(
     locale: string,

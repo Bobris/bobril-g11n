@@ -26,6 +26,14 @@ describe("modules", () => {
             check("The {name, space}room is full.", { name: undefined }, "The room is full.");
         });
 
+        it("quoted value", () => {
+            check("The {name, quoted}room is full.", { name: "server" }, 'The "server" room is full.');
+            check("The {name, quoted}room is full.", { name: "" }, "The room is full.");
+            check("The {name, quoted}room is full.", { name: undefined }, "The room is full.");
+            check("The {name, quoted}room is full.", { name: null }, "The room is full.");
+            check("The {name, quoted}room is full.", { name: 0 }, 'The "0" room is full.');
+        });
+
         it("custom formatter", () => {
             msgFormatter.registerCustomFormatter("surround_test", (value) => "[" + (value == null ? "" : String(value)) + "]");
             check("Value: {name, surround_test}", { name: "x" }, "Value: [x]");

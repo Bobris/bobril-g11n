@@ -15,6 +15,11 @@ describe("Parser", () => {
             { type: "format", id: "name", format: { type: "space", options: [] } },
             "room is full."
         ]);
+        check("The {name, quoted}room is full.", [
+            "The ",
+            { type: "format", id: "name", format: { type: "quoted", options: [] } },
+            "room is full."
+        ]);
         check("{name, surround_test}", { type: "format", id: "name", format: { type: "surround_test", options: [] } });
         check("{arg, number}", { type: "format", id: "arg", format: { type: "number", style: null, options: null } });
         check("{arg, time, relative}", {
