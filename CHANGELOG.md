@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+Add locale-aware opening and closing quote rules so the default `quoted` formatter can use locale-specific quotation marks. Custom formatters registered through `registerCustomFormatter(name, fn)` now also receive the active locale as the second argument.
+
 ## 5.6.0
 
 Add default `quoted` formatter that returns an empty string for `null`, `undefined`, and empty string values, otherwise wraps the value in double quotes and appends trailing space.

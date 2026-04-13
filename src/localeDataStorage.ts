@@ -2,6 +2,8 @@ export interface ILocaleRules {
     pluralFn: (val: number, ordinal: boolean) => string;
     td: string; // thousand delimiter
     dd: string; // decimal delimiter
+    oq: string; // opening quote
+    cq: string; // closing quote
 }
 
 let defs: {
@@ -28,10 +30,12 @@ defs["en"] = {
     },
     td: ",",
     dd: ".",
+    oq: "\"",
+    cq: "\"",
 };
 
 export function setRules(locale: string, params: any[]) {
-    defs[locale] = { pluralFn: params[0], td: params[1], dd: params[2] };
+    defs[locale] = { pluralFn: params[0], td: params[1], dd: params[2], oq: params[3] ?? "\"", cq: params[4] ?? "\"" };
 }
 
 export function getLanguageFromLocale(locale: string): string {

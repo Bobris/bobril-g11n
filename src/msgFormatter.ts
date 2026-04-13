@@ -9,7 +9,7 @@ import { isString, isArray, isNumber } from "bobril";
 (<any>window).moment = moment;
 
 var numberFormatterCache: { [locale_format: string]: (val: number) => string } = Object.create(null);
-const customFormatters = new Map<string, (value: unknown) => string>();
+const customFormatters = new Map<string, (value: unknown, locale: string) => string>();
 
 function getFormatter(locale: string, format: string, interpret: boolean): (val: number) => string {
     const key = interpret + "|" + locale + "|" + format;
@@ -30,16 +30,17 @@ function formatWithOptionalSpace(value: unknown): string {
     return String(value) + " ";
 }
 
-function formatWithQuotedValue(value: unknown): string {
+function formatWithQuotedValue(value: unknown, locale: string): string {
     if (value == null || value === "") return "";
-    return '"' + String(value) + '" ';
+    const rules = localeDataStorage.getRules(locale);
+    return rules.oq + String(value) + rules.cq + " ";
 }
 
-export function registerCustomFormatter(name: string, fn: (value: unknown) => string) {
+export function registerCustomFormatter(name: string, fn: (value: unknown, locale: string) => string) {
     customFormatters.set(name, fn);
 }
 
-function getCustomFormatter(name: string): (value: unknown) => string {
+function getCustomFormatter(name: string): (value: unknown, locale: string) => string {
     const formatter = customFormatters.get(name);
     if (formatter === undefined) throw new Error('Unknown custom formatter "' + name + '"');
     return formatter;
@@ -264,7 +265,7 @@ export function compile(
                             }
                         }
                     }
-                    return getCustomFormatter(type)(local);
+                    return getCustomFormatter(type)(local, locale);
             }
             throw new Error("invalid AST in compile");
         };
