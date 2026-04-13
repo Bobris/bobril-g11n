@@ -443,7 +443,7 @@ export function compile(
                 }
                 default: {
                     let formatFn = comp.addConstant(getCustomFormatter(type));
-                    comp.addBody(`return ${formatFn}(${localArg});`);
+                    comp.addBody(`return ${formatFn}(${localArg},${comp.addConstant(locale)});`);
                     break;
                 }
             }

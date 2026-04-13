@@ -1,4 +1,5 @@
 import moment from "moment";
+import * as localeDataStorage from "../src/localeDataStorage";
 import * as msgFormatParser from "../src/msgFormatParser";
 import * as msgFormatter from "../src/msgFormatter";
 
@@ -32,6 +33,8 @@ describe("modules", () => {
             check("The {name, quoted}room is full.", { name: undefined }, "The room is full.");
             check("The {name, quoted}room is full.", { name: null }, "The room is full.");
             check("The {name, quoted}room is full.", { name: 0 }, 'The "0" room is full.');
+            localeDataStorage.setRules("cs", [(value: number, _ordinal: boolean) => (value === 1 ? "one" : "other"), " ", ",", "\u201E", "\u201C"]);
+            check("The {name, quoted}room is full.", { name: "server" }, "The \u201Eserver\u201C room is full.", "cs-CZ");
         });
 
         it("custom formatter", () => {
@@ -48,6 +51,11 @@ describe("modules", () => {
             const raw = { nested: "value" };
             check("Value: {name, capture_test}", { name: raw }, "Value: ok");
             expect(captured).toBe(raw);
+        });
+
+        it("custom formatter gets locale", () => {
+            msgFormatter.registerCustomFormatter("capture_locale_test", (_value, locale) => locale);
+            check("Value: {name, capture_locale_test}", { name: "x" }, "Value: cs-CZ", "cs-CZ");
         });
 
         it("ordinal", () => {

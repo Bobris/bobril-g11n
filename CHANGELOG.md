@@ -2,7 +2,7 @@
 
 ## Unreleased
 
-Add locale-aware opening and closing quote rules so the default `quoted` formatter can use locale-specific quotation marks. Custom formatters registered through `registerCustomFormatter(name, fn)` now also receive the active locale as the second argument.
+Add required opening and closing quote rules for locale definitions so the default `quoted` formatter can use locale-specific quotation marks. Custom formatters registered through `registerCustomFormatter(name, fn)` now also receive the active locale as the second argument.
 
 ## 5.6.0
 

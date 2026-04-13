@@ -9,7 +9,9 @@ describe("numberFormatter", () => {
                 return "";
             }, //stub
             td: ".",
-            dd: ","
+            dd: ",",
+            oq: "\"",
+            cq: "\""
         };
         expect(numberFormatter.buildUnformat(rules)("-1.234,56")).toBe(-1234.56);
     });
