@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+Harden number formatting by replacing thousands-separator regular expression grouping with deterministic string grouping.
+
 ## 5.7.0
 
 Add required opening and closing quote rules for locale definitions so the default `quoted` formatter can use locale-specific quotation marks. Custom formatters registered through `registerCustomFormatter(name, fn)` now also receive the active locale as the second argument.

@@ -91,6 +91,9 @@ describe("modules", () => {
         it("number", () => {
             check("{arg, number}", { arg: 0 }, "0");
             check("{arg, number}", { arg: 1000 }, "1,000");
+            check("{arg, number}", { arg: 1000000000000000 }, "1,000,000,000,000,000");
+            localeDataStorage.setRules("replacement-test", [(value: number, _ordinal: boolean) => (value === 1 ? "one" : "other"), "$'", "."]);
+            check("{arg, number}", { arg: 1000000 }, "1$'000$'000", "replacement-test");
             check("{arg, number}", { arg: 1.234 }, "1.234");
             check("{arg, number, percent}", { arg: 0.23 }, "23%");
             check("{arg, number, custom, format:{0,0.0}}", { arg: 123456.78 }, "123,456.8");
