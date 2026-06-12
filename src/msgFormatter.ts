@@ -49,6 +49,67 @@ function getCustomFormatter(name: string): (value: unknown, locale: string) => s
 registerCustomFormatter("space", formatWithOptionalSpace);
 registerCustomFormatter("quoted", formatWithQuotedValue);
 
+const longDateFormatFallbacks: { [key: string]: string } = {
+    LTS: "h:mm:ss A",
+    LT: "h:mm A",
+    L: "MM/DD/YYYY",
+    LL: "MMMM D, YYYY",
+    LLL: "MMMM D, YYYY h:mm A",
+    LLLL: "dddd, MMMM D, YYYY h:mm A",
+    lts: "h:mm:ss A",
+    lt: "h:mm A",
+    l: "M/D/YYYY",
+    ll: "MMM D, YYYY",
+    lll: "MMM D, YYYY h:mm A",
+    llll: "ddd, MMM D, YYYY h:mm A",
+};
+
+const localFormattingTokens = /(\[[^\[]*\])|(\\)?(LTS|LT|LL?L?L?|l{1,4})/g;
+
+function getLongDateFormat(localeData: moment.Locale, token: string): string {
+    try {
+        const format = localeData.longDateFormat(token as moment.LongDateFormatKey);
+        if (isString(format) && format !== token) return format;
+    } catch (_err) {
+        // Fall back below. Broken or monkey-patched moment locale data must not break rendering.
+    }
+    return longDateFormatFallbacks[token] || token;
+}
+
+function expandLongDateFormatWithFallback(format: string, localeData: moment.Locale): string {
+    const seen: { [format: string]: true } = Object.create(null);
+    let expanded = format;
+    for (let i = 0; i < 8; i++) {
+        localFormattingTokens.lastIndex = 0;
+        if (!localFormattingTokens.test(expanded)) return expanded;
+        if (seen[expanded]) break;
+        seen[expanded] = true;
+        localFormattingTokens.lastIndex = 0;
+        expanded = expanded.replace(localFormattingTokens, (match, escaped, slash, token) => {
+            if (escaped || slash) return match;
+            return getLongDateFormat(localeData, token);
+        });
+    }
+    localFormattingTokens.lastIndex = 0;
+    return expanded.replace(localFormattingTokens, (match, escaped, slash, token) => {
+        if (escaped || slash) return match;
+        return longDateFormatFallbacks[token] || match;
+    });
+}
+
+function formatMomentSafely(value: any, locale: string, format: string): string {
+    const date = moment(value).locale(locale);
+    try {
+        return date.format(format);
+    } catch (err) {
+        try {
+            return date.format(expandLongDateFormatWithFallback(format, date.localeData()));
+        } catch (_fallbackErr) {
+            throw err;
+        }
+    }
+}
+
 function AnyFormatter(
     locale: string,
     type: string,
@@ -119,13 +180,11 @@ function AnyFormatter(
             }
             if (style === "custom" && "format" in options) {
                 return (val, opt) => {
-                    return moment(val)
-                        .locale(locale)
-                        .format((<any>opt).format);
+                    return formatMomentSafely(val, locale, (<any>opt).format);
                 };
             }
             return (val, _opt) => {
-                return moment(val).locale(locale).format(style);
+                return formatMomentSafely(val, locale, style);
             };
         }
     }

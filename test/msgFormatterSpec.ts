@@ -122,6 +122,20 @@ describe("modules", () => {
             check("{a, date, custom, format:{{myformat}} }", { a: new Date(2000, 0, 2), myformat: "ddd" }, "Sun");
         });
 
+        it("date survives recursive moment locale format hook", () => {
+            const localeData = moment.localeData("en");
+            const originalLongDateFormat = localeData.longDateFormat;
+            (localeData as any).longDateFormat = function (token: string) {
+                if (token === "lll") return this.longDateFormat(token);
+                return originalLongDateFormat.call(this, token as moment.LongDateFormatKey);
+            };
+            try {
+                check("{a, date, lll}", { a: new Date(2000, 0, 2) }, "Jan 2, 2000 12:00 AM");
+            } finally {
+                (localeData as any).longDateFormat = originalLongDateFormat;
+            }
+        });
+
         it("calendar", () => {
             check(
                 "{a, date, calendar}",

@@ -2,6 +2,12 @@
 
 ## Unreleased
 
+## 5.7.2
+
+Harden moment date formatting against recursive or broken locale long-date format hooks.
+
+## 5.7.1
+
 Harden number formatting by replacing thousands-separator regular expression grouping with deterministic string grouping.
 
 ## 5.7.0
